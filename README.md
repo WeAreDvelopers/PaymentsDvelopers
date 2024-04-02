@@ -13,5 +13,6 @@ php artisan migrate --seed
 
 ## Passo 5
 Rode o projeto e em 2 terminais
+php artisan server e npm run dev
 
 
