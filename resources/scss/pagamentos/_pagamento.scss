@@ -1,0 +1,125 @@
+.fundo-pagamento {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    border-radius: 25px;
+    box-shadow: 13px 11px 54px 0px rgba(0,0,0,.4);
+    background: #fff;
+    max-width: 900px;
+}
+
+.form-label {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.title-pagamento {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    font-family: 'Inter', sans-serif;
+}
+
+.imagens-cartao-pagamento {
+    position: relative;
+    width: 100%;
+    height: 230px;
+
+
+    .cartao-frente {
+        position: absolute;
+        width: 325px;
+        height: 200px;
+        z-index: 1;
+
+        @include mq('phone-wide',max){
+            width: 275px;
+            height: 200px;
+            right: 5px;
+        }
+    }
+    
+    .cartao-verso {
+        position: absolute;
+        width: 310px;
+        height: 215px;
+        margin: 50px 0px 0px 40px;
+
+        @include mq('phone-wide',max){
+            width: 250px;
+            height: 200px;
+        }
+    }
+}
+
+.leve-junto-pagamento {
+    background: #002954;
+    color: #FFF;
+
+    .alinhamento-leve-junto {
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    p{
+        font-size: 15px;
+    }
+}
+
+.fundo-check {
+    font-family: 'Inter', sans-serif;
+    background: #F7F7F7;
+    padding: 12px 10px 10px 30px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.valor-checklist {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: #002954;
+}
+
+.txt-pagamento {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    text-align: justify;
+}
+
+.parcela-pagamento {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+}
+
+.txt-parcela-pagamento {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+
+
+
+.btn-pagamento {
+    display: block;
+    background: #37B34A;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0;
+}
+
+.img-selo{
+    height: 70px;
+}
