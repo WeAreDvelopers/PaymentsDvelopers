@@ -22,6 +22,7 @@ public function index(Request $request){
 
     return view('admin.produtos.index', compact('produtos'));
 }
+
 public function new(Request $request){
 
     return view('admin.produtos.new');
@@ -59,10 +60,6 @@ public function new(Request $request){
     public function edit(Request $request, $id){
                 
         $produto = Produtos::find($id);
-     
-       
-
-      
 
         return view('admin.produtos.edit', compact('produto',));
 

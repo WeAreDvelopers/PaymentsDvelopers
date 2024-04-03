@@ -13,8 +13,11 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
   <!-- Nucleo Icons -->
   <link href="{{asset('assets/nucleo-icons.css')}}" rel="stylesheet" />
+
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/40b7169917.js" crossorigin="anonymous"></script>
+  
+
   <!-- Estilos CSS / TOGGLE-->
   <link rel="stylesheet" href="{{asset('css/toggle_Switch.css')}}">
   <link rel="stylesheet" href="{{asset('css/estilos.css')}}">
@@ -22,6 +25,9 @@
   <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
   <link href="{{asset('assets/nucleo-svg.css')}}" rel="stylesheet" />
+
+
+
   @vite(['resources/scss/app.scss', 'resources/js/app.js'])
 
  
