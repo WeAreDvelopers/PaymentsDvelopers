@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\IntegracoesController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProdutosController;
+use App\Http\Controllers\Admin\PedidosController;
+
 use App\Http\Controllers\Admin\TaxasDvelopersController;
 use App\Http\Controllers\Admin\UsuarioController;
 use Illuminate\Support\Facades\Route;
@@ -29,7 +31,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\IndexController;
 use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\PdfController;
-
 
 
 // Route::middleware('checksubdomain')->group(function () {
@@ -136,11 +137,31 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
         Route::get('/select_grupo/{grupoId}', 'selectGrupo')->name('selectGrupo');
 
     });
+<<<<<<< HEAD
     Route::name('integracoes.')->prefix('integracoes')->controller(IntegracoesController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/configuracoes/{slug}', 'configuracoes')->name('configuracoes');
         Route::post('/store', 'store')->name('store');
     });
+=======
+
+// Pedidos
+    Route::name('pedidos.')->prefix('pedidos')->controller(PedidosController::class)->group(function () {
+
+        Route::get('/', 'index')->name('index');
+        Route::get('/new', 'new')->name('new');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/edit/{id}', 'edit')->name('edit');
+        Route::post('/update/{id}', 'update')->name('update');
+        Route::get('/delete/{id}', 'delete')->name('delete');
+
+        Route::get('/preview/{id}', 'preview')->name('preview');
+
+   });
+
+
+
+>>>>>>> 430eda00e57d0550deb4c9bb354c50d72ea99652
     Route::name('media.')->prefix('media')->controller(MediaController::class)->group(function () {
         Route::get('/popUp/{folder?}', 'popUp')->name('popUp');
         Route::post('/list-folder/{folder?}', 'listFiles')->name('list-files');
@@ -152,11 +173,7 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
         Route::post('/upload-media', 'moveFile')->name('upload-media');
         Route::post('/delete-media', 'deleteFile')->name('delete-media');
         
-        
-        
-       
       
-       
       
     });
 });

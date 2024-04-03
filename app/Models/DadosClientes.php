@@ -14,5 +14,7 @@ class DadosClientes extends Model
         'cpf',
         'telefone',
         'id_asaas',
-    ]
+    ];
+
+
 }

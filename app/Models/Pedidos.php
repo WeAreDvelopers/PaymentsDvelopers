@@ -11,7 +11,9 @@ class Pedidos extends Model
 
     protected $table = 'pedidos';
     protected $fillable = [
+
         'id_user',
+        'id_produto',
         
         'id_cupom',
         'valor',
@@ -19,5 +21,19 @@ class Pedidos extends Model
         'valor_final',
     ];
 
+    public function produto(){
+        return  $this->hasOne(Produtos::class,'id','id_produto');
+    }
 
+    public function usuario(){
+        return  $this->hasOne(User::class,'id','id_user');
+    }
+
+    public function cupom(){
+        return  $this->hasOne(Cupons::class,'id','id_cupom');
+    }
+
+    public function dados(){
+        return  $this->hasOne(DadosClientes::class,'id','id_cupom');
+    }
 }
