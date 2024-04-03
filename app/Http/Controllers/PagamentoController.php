@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Carrinho;
+use App\Models\ClientesTokens;
 use App\Models\Cupons;
 use App\Models\Empresa;
 use App\Models\EmpresaPagamento;
@@ -31,9 +32,10 @@ class PagamentoController extends Controller
         private $token;
     
     
-        public function __construct(){
+    public function __construct(){
+     
             $this->urlBase = env('BASE_ASAAS'); 
-            $this->token = env('TOKEN_ASAAS'); 
+           // $this->token = env('TOKEN_ASAAS'); 
     }
 
 
@@ -49,9 +51,6 @@ class PagamentoController extends Controller
             'valor_final'=>$produto->valor,
         ]);
 
-     
-        //$plano = Planos::where('slug',$subdomain)->first();
-
        $cupons = $produto->cupons;
        $totalDisponivel = 0;
        
@@ -59,18 +58,32 @@ class PagamentoController extends Controller
           $totalDisponivel += $v->cuponsDisponiveis($produto->id);
         }
 
-       
         return view('pagamento',compact('produto','totalDisponivel','carrinho'));
     }
     public function aplicarCupom(Request $request){
         $data = $request->except('_token');
         $carrinho = Carrinho::where('session_id',session()->getId())->first();
+        $cupom = Cupons::where(['codigo'=>$data['cupom'],'id_produto'=>$data['produto']])->first();
 
-        
+        if(!$cupom){
+                return response(['msg'=>'Cupom não encontrado'],422);
+        }else{
+           if($cupom->cuponsDisponiveis($data['produto']) <= 0){
+                return response(['msg'=>'Cupom inválido ou esgotado'],422);
+           }
+        }
+        $valorFinal = $cupom->calulaDesconto();
+        $this->atualizaCarrinho([
+            'id_cupom'=>$cupom->id,
+            'valor_final' => $valorFinal,
+
+        ]);
+
     }
     public function carrinho(Request $request){
-
-        return view('include');
+        $carrinho = Carrinho::where('session_id',session()->getId())->first();
+        $produto = $carrinho->produto;
+        return view('include._item',compact('carrinho','produto'));
     }
     public function capturaLead(Request $request,$token = null){
         $data = $request->except('_token');
@@ -100,9 +113,9 @@ class PagamentoController extends Controller
       
         $produto = Produtos::where('token',$token)->first();
        
-       
-        $companyInfo = $this->createBaseCompany($dados);
-        $customerInfo = $this->createBaseCustomer($dados, $companyInfo);
+        $empresa = $produto->empresa;
+        // $companyInfo = $this->createBaseCompany($dados);
+        $customerInfo = $this->createBaseCustomer($dados,$empresa);
          //dd($customerInfo);
         if($customerInfo['status'] == 'error'){
             return response()->json([
@@ -112,7 +125,7 @@ class PagamentoController extends Controller
         }
         $customerInfo = $customerInfo['data'];
        
-        $payment = $this->criarAssinatura($customerInfo['empresa']['id_asaas'], $companyInfo, $dados,$plano);
+         $payment = $this->criarAssinatura($customerInfo['id_asaas'], $dados);
         if($payment['status'] == 'error'){
             return response()->json([
                 'status' => 'error',
@@ -136,32 +149,41 @@ class PagamentoController extends Controller
         ]);
      }
 
-     public function createBaseCompany($dados){
-        $company = Empresa::create([
-            'nome'  =>  $dados['nome'],
-            'status'    =>  'ativo',
-            'telefone'  =>  $dados['celular']
-        ]);
-        return $company->toArray();
-     }
+    //  public function createBaseCompany($dados){
+    //     $company = Empresa::create([
+    //         'nome'  =>  $dados['nome'],
+    //         'status'    =>  'ativo',
+    //         'telefone'  =>  $dados['celular']
+    //     ]);
+    //     return $company->toArray();
+    //  }
 
-     public function createBaseCustomer($dados, $empresa){
+     public function createBaseCustomer($dados,$empresa){
         $now = Carbon::now();
-        $checkCustomer = User::where('email', $dados['email'])->with('empresa')->first();
+        $costumer = User::where('email', $dados['email'])->first();
         $senha = Str::random(8);
-        if($checkCustomer && $checkCustomer->empresa->id_asaas){
-            //return $checkCustomer;
-            $checkCustomer['id_asaas'] = $checkCustomer->empresa->id_asaas;
-            return ['status'=>'ok','data'=>$checkCustomer->toArray()];
+        $tokenAsaas = null;
+        if($costumer){
+            $tokenAsaas = $costumer->tokenAssas($empresa->id)->first();
         }else{
-
             $costumer = User::create([
                 'name'  => $dados['nome'],
                 'email' =>  $dados['email'],
                 'password'  =>  Hash::make($senha),
-                'role'  =>  'user',
-                'id_empresa'    =>  $empresa['id'],
+                'role'  =>  'cliente',
+              
             ]);
+            $costumer->markEmailAsVerified();
+
+        }
+        
+        if($costumer && $tokenAsaas){
+            //return $checkCustomer;
+            $costumer['id_asaas'] = $tokenAsaas->id_asaas;
+            return ['status'=>'ok','data'=>$costumer->toArray()];
+        }else{
+
+           
             
             $data = [
                 "name"                  => $dados['nome'],
@@ -169,10 +191,14 @@ class PagamentoController extends Controller
                 "mobilePhone"           => preg_replace("/[^0-9]/", "", $dados['celular']),
                 "cpfCnpj"               => preg_replace("/[^0-9]/", "", $dados['cpf']),
             ];
+          
+
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
-                'access_token' => $this->token,
+                'access_token' => $empresa->token_asaas,
             ])->post($this->urlBase . '/customers', $data);
+
+
             if ($response->failed()) {
                 //session()->flash('error', $response->json()['errors']);
                 return ['status'=>'error','data'=>$response->json()['errors']];
@@ -181,17 +207,16 @@ class PagamentoController extends Controller
 
           
 
-            $costumer->markEmailAsVerified();
-
-            Empresas::where('id', $empresa['id'])->update([
-                'id_asaas'  =>  $response->json()['id']
+           
+            ClientesTokens::create([
+                'id_empresa'=>$empresa->id,
+                'id_user'=>$costumer->id,
+                'id_asaas'=>$response->json()['id'],
             ]);
-            $costumer['senha'] = $senha;
-            $costumer['empresa']['id_asaas'] = $response->json()['id'];
+           
+            $costumer['id_asaas'] = $response->json()['id'];
 
-            UserComunicacao::create([
-                'id_user' => $costumer->id
-            ]);
+         
 
     
             return ['status'=>'ok','data'=>$costumer->toArray()];
@@ -213,117 +238,96 @@ class PagamentoController extends Controller
         });
      }
 
-     public function criarAssinatura($id,$empresa,$data,$plano){
-        $now = Carbon::now()->addYear();
-        $remoteIp = $_SERVER['REMOTE_ADDR'];
-        list($expiryMonth, $expiryYear) = explode('/', $data['cardExpDate']);
-       
-        if($plano->slug == 'pessoais'){
-            $totalValue = $plano->valor;
+    public function criarAssinatura($id_asaas,$data){
+                $now = Carbon::now()->addYear();
+                $carrinho = Carrinho::where('session_id',session()->getId())->first();
 
-            $dados = [
-                "billingType" => "CREDIT_CARD",
-                "cycle" =>"MONTHLY",
-                "creditCard" => [
-                    "holderName" => $data['cardHolderName'],
-                    "number" => $data['cardNumber'],
-                    "expiryMonth" => $expiryMonth,
-                    "expiryYear" => $expiryYear,
-                    "ccv" => $data['cardCcv']
-                ],
-                "creditCardHolderInfo" => [
-                    "name" => $data['nome'],
-                    "email" => $data['email'],
-                    "cpfCnpj" => $data['cpf'],
-                    "postalCode" => $data['cep'],
-                    "addressNumber" => $data['numero'],
-                    "phone" => $data['celular']
-                ],
-                "customer" => $id,
-                "value" => $totalValue,
-                "dueDate" => date('Y-m-d'),
-                "description" => "Assinatura Números Não mentem",
-               
-                "remoteIp" => $remoteIp
-            ];
+                $remoteIp = $_SERVER['REMOTE_ADDR'];
+                list($expiryMonth, $expiryYear) = explode('/', $data['cardExpDate']);
+            
+                if($carrinho->produto->tipo == 'recorrente'){
+                    $totalValue = $carrinho->valor_final;
 
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'access_token' => $this->token,
-            ])->post($this->urlBase . '/subscriptions', $dados);
-          
-        }
-        if($plano->slug == 'precificacao'){
+                    $dados = [
+                        "billingType" => "CREDIT_CARD",
+                        "cycle" =>"MONTHLY",
+                        "creditCard" => [
+                            "holderName" => $data['cardHolderName'],
+                            "number" => $data['cardNumber'],
+                            "expiryMonth" => $expiryMonth,
+                            "expiryYear" => $expiryYear,
+                            "ccv" => $data['cardCcv']
+                        ],
+                        "creditCardHolderInfo" => [
+                            "name" => $data['nome'],
+                            "email" => $data['email'],
+                            "cpfCnpj" => $data['cpf'],
+                            "postalCode" => $data['cep'],
+                            "addressNumber" => $data['numero'],
+                            "phone" => $data['celular']
+                        ],
+                        "customer" => $id_asaas,
+                        "value" => $totalValue,
+                        "dueDate" => date('Y-m-d'),
+                        "description" => "Assinatura " . $carrinho->produto->name,
+                    
+                        "remoteIp" => $remoteIp
+                    ];
 
-            $totalValue = 116.40;
-            if ($data['numberTax'] == 1) {
-                $totalValue = 97.00;
+                    $response = Http::withHeaders([
+                        'Content-Type' => 'application/json',
+                        'access_token' => $carrinho->produto->empresa->token_asaas,
+                    ])->post($this->urlBase . '/subscriptions', $dados);
+                
+                }
+                if($carrinho->produto->tipo == 'unico'){
+
+                    $totalValue = $carrinho->valor_final;
+                $dados = [
+                    "billingType" => "CREDIT_CARD",
+                    "creditCard" => [
+                        "holderName" => $data['cardHolderName'],
+                        "number" => $data['cardNumber'],
+                        "expiryMonth" => $expiryMonth,
+                        "expiryYear" => $expiryYear,
+                        "ccv" => $data['cardCcv']
+                    ],
+                    "creditCardHolderInfo" => [
+                        "name" => $data['nome'],
+                        "email" => $data['email'],
+                        "cpfCnpj" => $data['cpf'],
+                        "postalCode" => $data['cep'],
+                        "addressNumber" => $data['numero'],
+                        "phone" => $data['celular']
+                    ],
+                    "customer" => $id_asaas,
+                    "value" => $totalValue,
+                    "dueDate" => date('Y-m-d'),
+                    "description" => $carrinho->produto->name,
+                    "installmentCount"  =>  $data['numberTax'],
+                    "installmentValue"  =>  $totalValue / $data['numberTax'],
+                    "remoteIp" => $remoteIp
+                ];
+
+                $response = Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'access_token' => $carrinho->produto->empresa->token_asaas,
+                ])->post($this->urlBase . '/payments', $dados);
             }
-    
-            if(@$data['bonus'] !== null){
-                $totalValue += 7.90;
-                $this->bonus = true;
-    
-            }
-        $dados = [
-            "billingType" => "CREDIT_CARD",
-            "creditCard" => [
-                "holderName" => $data['cardHolderName'],
-                "number" => $data['cardNumber'],
-                "expiryMonth" => $expiryMonth,
-                "expiryYear" => $expiryYear,
-                "ccv" => $data['cardCcv']
-            ],
-            "creditCardHolderInfo" => [
-                "name" => $data['nome'],
-                "email" => $data['email'],
-                "cpfCnpj" => $data['cpf'],
-                "postalCode" => $data['cep'],
-                "addressNumber" => $data['numero'],
-                "phone" => $data['celular']
-            ],
-            "customer" => $id,
-            "value" => $totalValue,
-            "dueDate" => date('Y-m-d'),
-            "description" => "Assinatura Números Não mentem",
-            "installmentCount"  =>  $data['numberTax'],
-            "installmentValue"  =>  $totalValue / $data['numberTax'],
-            "remoteIp" => $remoteIp
-        ];
+         
+        
+                if ($response->failed()) {
+                    return ['status'=>'error','erros'=> $response->json()];
+                }
+                $response = $response->json();
 
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-            'access_token' => $this->token,
-        ])->post($this->urlBase . '/payments', $dados);
-    }
-       
-
-        if ($response->failed()) {
-            return ['status'=>'error','erros'=> $response->json()['errors']];
-        }
-        $response = $response->json();
-
-        Empresa::where('id', $empresa['id'])->update([
-           'id_subscriptions'=>$response['id'],
-        ]);
-        $empresaPagamento  = EmpresaPagamento::where('id_empresa',$empresa['id'])->count();
-        if($empresaPagamento == 0){
-           EmpresaPagamento::create([
-               'id_empresa'        => $empresa['id'],
-               'id_plano'          => $plano->id,
-               'status'            => 'pago',
-               'valor'             => $totalValue,
-               'data_vencimento'   => $now->format('Y-m-d'),
-               'metodo_pagamento'  => 'Asaas',
-               'total_licencas'    => 1,
-               'subscription'      => @$response['invoiceNumber'] ?? @$response['id'],
-               'forma_pagamento'   => 'anual',
-           ]);
-       }
-       $this->vencimento = $now->format('d/m/Y');
-       $this->valor = $totalValue;
-       
-        return ['status'=>'ok','data'=> $response['id']];;
+              
+         
+                
+            $this->vencimento = $now->format('d/m/Y');
+            $this->valor = $totalValue;
+            
+                return ['status'=>'ok','data'=> $response['id']];;
     }
 
     public function saveUserData(Request $request){

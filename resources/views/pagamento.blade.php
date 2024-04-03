@@ -12,8 +12,8 @@
         <div class="row justify-content-center">
             <div class="col-sm-4 col-12 text-center"> 
                 @if($produto->empresa->media)
-                <img src="{{$produto->empresa->media->fullpatch()}}" >
-                @else
+                    <img src="{{$produto->empresa->media->fullpatch()}}" >
+               
  
                 @endif
         </div>
@@ -22,7 +22,7 @@
     </header>
 
     <div class="container fundo-pagamento mt-5" id="paymentBox">
-        <form action="{{route('site.createBaseAccount',['token',$produto->token])}}" id="formPayment" class="">
+        <form action="{{route('site.createBaseAccount',['token'=>$produto->token])}}" id="formPayment" class="">
             @csrf
         <div class="row p-sm-5 p-3 ">
             <div class="ownerInfo ">
@@ -218,8 +218,7 @@ function atualizarValorFinal() {
     const valorTotal = $('input[name="valor"]').val();
     
 
-  
-   
+
 
    
 
@@ -231,33 +230,59 @@ function atualizarValorFinal() {
     }).format(valorPorParcela));
 }
 
-$('select[name="numberTax"]').change(function() {
+$('body').on('change','select[name="numberTax"]',function() {
     atualizarValorFinal();
-    
 });
 
 $('#bonus').change(function() {
     atualizarValorFinal();
 });
 
-$('#aplicarCupom').click(function (e){
+$('body').on('click','#aplicarCupom',function (e){
+    e.preventDefault()
     var cupom = $('input[name="cupom"]');
   
-    $('.cupom input').each(function(){
-            if($(this).val() == ""){
-                $(this).addClass('error')
-                $(this).attr('invalid')
+    
+            if(cupom.val() == ""){
+                cupom.addClass('error')  
+                return false;
             }else{
-                $(this).removeClass('error')
+                cupom.removeClass('error')
+            }
+        var formData = new FormData();
+        formData.append('_token','{{csrf_token()}}');
+        formData.append('cupom',cupom.val());
+        formData.append('produto','{{$produto->id}}');
+      
+            $.ajax({
+            type: "POST",
+         
+            url: '{{route("site.aplicarCupom")}}',
+				type: 'POST',
+				cache: false,
+				contentType: false,
+				processData: false,
+				data: formData,
+            success: function(data) {
+              console.log(data)
+              getCarrinho()
+            },
+            error: function(err) {
+               var response = err.responseJSON;
+                Swal.fire(
+                    'Ops!',
+                    response.msg,
+                    'error'
+                )
             }
         })
-        if($('.cupom .error').length > 0){
-        cupom.closest('div').addClass('was-validated');
-
-        }
-        return false;
     
 });
+function getCarrinho(){
+    $.get('{{route("site.carrinho")}}',function(data){
+        $("#carrinho").html(data);
+    })
+}
 $('#dataSave').click(function (e){
     const paymentData = document.querySelector(".cardInfo")
     const followbtn = document.querySelector('#dataSave');
@@ -275,7 +300,7 @@ $('#dataSave').click(function (e){
         }
     $.ajax({
             type: "POST",
-            url: "",
+            url: "{{route('site.capturaLead',['token'=>$produto->token])}}",
             data: $('#formPayment').serialize(),
             success: function(data) {
                 $(paymentData).removeClass('d-none')

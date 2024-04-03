@@ -31,4 +31,18 @@ class Empresas extends Model
     public function media(){
         return $this->hasOne(Media::class,'id','id_logo');
     }
+
+    public function checkIntegracao($name){
+       
+        $check = Integracoes::where('nome',$name)->first();
+        if(!$check){
+            $check =  Integracoes::create([
+                'id_empresa'=>$this->id,
+                'nome'=>$name,
+                'status'=>'inativo',
+            ]);
+        }
+        return $check;
+    }
+
 }

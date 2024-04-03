@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\FormasPagamentoController;
 use App\Http\Controllers\Admin\GatewaysController;
 use App\Http\Controllers\Admin\GrupoController;
 use App\Http\Controllers\Admin\HomeController;
+use App\Http\Controllers\Admin\IntegracoesController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProdutosController;
 use App\Http\Controllers\Admin\TaxasDvelopersController;
@@ -39,7 +40,8 @@ use App\Http\Controllers\PdfController;
             Route::get('/pdf', [PdfController::class, 'adicionarInformacoes'])->name('pdf');
             Route::get('/email', [IndexController::class, 'email'])->name('email');
             Route::get('/updateAdvertise', [IndexController::class, 'updateUserAdvertiseData'])->name('updateUserAdvertiseData');
-            Route::post('pagamento/{token}', [PagamentoController::class, 'capturaLead'])->name('createBaseAccount');
+            Route::post('capturaLead/{token}', [PagamentoController::class, 'capturaLead'])->name('capturaLead');
+            Route::post('createBaseAccount/{token}', [PagamentoController::class, 'createBaseAccount'])->name('createBaseAccount');
             Route::get('carrinho', [PagamentoController::class, 'carrinho'])->name('carrinho');
             Route::post('aplicarCupom', [PagamentoController::class, 'aplicarCupom'])->name('aplicarCupom');
             
@@ -133,6 +135,11 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
         Route::match(['get', 'post'], '/produtos/status', 'status')->name('status');
         Route::get('/select_grupo/{grupoId}', 'selectGrupo')->name('selectGrupo');
 
+    });
+    Route::name('integracoes.')->prefix('integracoes')->controller(IntegracoesController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/configuracoes/{slug}', 'configuracoes')->name('configuracoes');
+        Route::post('/store', 'store')->name('store');
     });
     Route::name('media.')->prefix('media')->controller(MediaController::class)->group(function () {
         Route::get('/popUp/{folder?}', 'popUp')->name('popUp');

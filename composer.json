@@ -36,6 +36,7 @@
             "Tests\\": "tests/"
         },
         "files": [
+            "app/Helpers/functions.php",
             "app/helpersBlade.php"
           ]
     },

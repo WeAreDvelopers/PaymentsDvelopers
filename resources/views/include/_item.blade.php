@@ -30,7 +30,7 @@
                  
                     <div class="col-sm-8 col-12 pt-4">
                     <div class="parcela-pagamento" id="valor-parcela">
-                         por R$ {{getMoney($carrinho->valor)}}
+                         por R$ {{getMoney($carrinho->valor_final)}}
                     </div>
                     
                   
