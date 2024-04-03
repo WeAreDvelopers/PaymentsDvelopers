@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\DadosClientes;
 use App\Models\Pedidos;
 use App\Models\Produtos;
 use Illuminate\Http\Request;
@@ -26,15 +27,15 @@ class PedidosController extends Controller
 // Preview
     public function preview (Request $request, $id){
 
+        $cliente = Auth::user();
+       
+
+        $dados_cliente = DadosClientes::where('id_user', $cliente->id)->first();
+       
         $pedido = Pedidos::find($id);
 
-        return view('admin.pedidos.preview', compact('pedido'));
+        return view('admin.pedidos.preview', compact('pedido', 'dados_cliente', 'cliente'));
     }
 
-/*
-    public function preview(Request $request){
 
-        return view('admin.pedidos.preview');
-    }
-*/
 }

@@ -25,29 +25,26 @@
                     </div>
                 </div>
 
-                <div id="lista-Produtos">
+                <div id="lista-Pedidos">
                     @include('admin.pedidos._list-pedidos')
                 </div> 
            </div>
         </div>
 
-<!-- Modal Pedido-->
 
-    <div class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" id="modal-pedidos">
+            <!-- Modal Pedido-->
+                <div class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" role="dialog" aria-hidden="true" id="modal-pedido">
 
-        <div class="modal-dialog" >
-            <div class="modal-content">
-               
-                <div class="modal-body">
-               
-
+                    <div class="modal-dialog modal-lg" >
+                        <div class="modal-content">
+                        
+                            <div class="modal-body" id="conteudo-pedido">
+                                            
+                            </div>
+                        
+                        </div>
+                    </div>
                 </div>
-              
-            </div>
-        </div>
-    </div>
-
-
 
     </div>
 </div>
@@ -83,9 +80,10 @@
            type: "GET",
 
            success: function(response) {
-               
-               $("#modal-pedidos").html(response);
-               $("#modal-pedidos").modal('show')
+
+               $("#conteudo-pedido").html(response);
+               $("#modal-pedido").modal('show')
+
            },       
        });
    });

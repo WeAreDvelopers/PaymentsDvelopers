@@ -32,4 +32,8 @@ class Pedidos extends Model
     public function cupom(){
         return  $this->hasOne(Cupons::class,'id','id_cupom');
     }
+
+    public function dados(){
+        return  $this->hasOne(DadosClientes::class,'id','id_cupom');
+    }
 }
