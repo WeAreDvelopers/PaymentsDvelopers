@@ -55,6 +55,7 @@ use App\Http\Controllers\PdfController;
 
 
 Auth::routes();
+
 Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () {
 
      Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -137,13 +138,11 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
         Route::get('/select_grupo/{grupoId}', 'selectGrupo')->name('selectGrupo');
 
     });
-<<<<<<< HEAD
     Route::name('integracoes.')->prefix('integracoes')->controller(IntegracoesController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/configuracoes/{slug}', 'configuracoes')->name('configuracoes');
         Route::post('/store', 'store')->name('store');
     });
-=======
 
 // Pedidos
     Route::name('pedidos.')->prefix('pedidos')->controller(PedidosController::class)->group(function () {
@@ -161,7 +160,6 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
 
 
 
->>>>>>> 430eda00e57d0550deb4c9bb354c50d72ea99652
     Route::name('media.')->prefix('media')->controller(MediaController::class)->group(function () {
         Route::get('/popUp/{folder?}', 'popUp')->name('popUp');
         Route::post('/list-folder/{folder?}', 'listFiles')->name('list-files');

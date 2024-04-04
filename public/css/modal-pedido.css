@@ -116,3 +116,14 @@ hr {
 .align-bottom {
     vertical-align: bottom!important;
 }
+
+.font-14 {
+    font-size: 14px!important;
+}
+
+.font-18 {
+    font-size: 18px!important;
+}
+.font-12 {
+    font-size: 12px!important;
+}

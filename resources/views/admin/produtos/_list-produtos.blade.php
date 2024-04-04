@@ -4,7 +4,7 @@
                 <thead class="cabecalho">
                     <tr>
                        
-                        <th scope="col">Descriçao</th>
+                        <th scope="col">Produto</th>
                        
                         <th scope="col">Valor</th>
                         <th scope="col">Link</th>
@@ -19,13 +19,14 @@
                 @foreach($produtos as $k => $prod)
                     <tr>
                        
-                        <td>{{$prod->descricao ?? ''}}</td>
+                        <td>{{$prod->nome ?? ''}}</td>
+                        <td>{{getMoney($prod->valor) ?? ''}}</td>
                         <td>
                             <a href="{{route('site.pagamento',['token'=>$prod->token])}}" target="_blank" class="btn btn-sm btn-primary">
                                 Link</a>
                         </td>
                         
-                        <td>{{getMoney($prod->valor) ?? ''}}</td>
+                        
 
                 <!-- TOGGLE SWITCH -->
                     @if($prod->status == 'ativo')

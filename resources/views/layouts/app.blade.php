@@ -50,6 +50,7 @@
   <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
    
   <div class="row justify-content-end pt-4">
+    
       <div class="col-2">
         @if(Auth::check())
           <form method="POST" action="{{ route('logout') }}">
@@ -75,7 +76,7 @@
   <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
   <!--   Core JS Files   -->
   <script src="{{asset('/assets/js/core/popper.min.js')}}"></script>
-  <script src="{{asset('/assets/js/core/bootstrap.min.js')}}"></script>
+  
   <script src="{{asset('/assets/js/plugins/perfect-scrollbar.min.js')}}"></script>
   <script src="{{asset('/assets/js/plugins/smooth-scrollbar.min.js')}}"></script>
 
