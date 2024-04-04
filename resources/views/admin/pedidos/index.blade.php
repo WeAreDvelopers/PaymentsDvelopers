@@ -20,7 +20,7 @@
                     </div>
                    
                     <div class="col-5 my-2 pe-4 text-end">
-                    <a href="{{route('admin.pedidos.new')}}" class="btn btn-primary " type="button" 
+                    <a href="#" class="btn btn-primary " type="button" 
                      >Cadastrar</a>
                     </div>
                 </div>

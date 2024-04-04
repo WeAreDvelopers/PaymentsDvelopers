@@ -10,7 +10,7 @@
                     <select class="form-select"  id="grupoSelect" name="id_produto" required>
                         <option value="" disabled selected>Selecione</option>
                     @foreach($produtos as $produto)
-                        <option value="{{$produto->id}}" @if($cupom->id_produto == $produto->id) selected @endif>{{ $produto->descricao}}</option>
+                        <option value="{{$produto->id}}" @if($cupom->id_produto == $produto->id) selected @endif>{{ $produto->nome}}</option>
                     @endforeach
                    </select>
             </div>

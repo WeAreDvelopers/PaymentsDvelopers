@@ -54,6 +54,7 @@ use App\Http\Controllers\PdfController;
 
 
 Auth::routes();
+
 Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () {
 
      Route::get('/', [HomeController::class, 'index'])->name('home');

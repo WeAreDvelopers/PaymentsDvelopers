@@ -36,8 +36,14 @@ class Cupons extends Model
     public function produto(){
         return $this->hasOne(Produtos::class,'id','id_produto');
     }
-    public function calulaDesconto(){
+
+
+// Calculo de desconto - CUPOM
+
+    public function calculaDesconto(){
+
         $valorProduto = $this->produto->valor;
+
         if($this->tipo == "porcentagem"){
             $valorFinal = $valorProduto - ($valorProduto * ($this->valor / 100));
         }

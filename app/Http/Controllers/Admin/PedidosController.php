@@ -28,7 +28,7 @@ class PedidosController extends Controller
     public function preview (Request $request, $id){
 
         $cliente = Auth::user();
-       
+     
 
         $dados_cliente = DadosClientes::where('id_user', $cliente->id)->first();
        

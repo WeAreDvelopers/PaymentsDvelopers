@@ -5,6 +5,7 @@
 <div class="page-content container">
 
     <div class="page-header text-blue-d2">
+
         <h1 class="page-title text-secondary-d1">
             Pedido
             <small class="page-info">
@@ -14,16 +15,9 @@
         </h1>
 
         <div class="page-tools">
-            <div class="action-buttons">
-                <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="Print">
-                    <i class="mr-1 fa fa-print text-primary-m1 text-120 w-2"></i>
-                    Print
-                </a>
-                <a class="btn bg-white btn-light mx-1px text-95" href="#" data-title="PDF">
-                    <i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2"></i>
-                    Export
-                </a>
-            </div>
+            
+            <!-- Modal Close -->
+
         </div>
     </div>
 
@@ -49,12 +43,12 @@
                     <div class="col-sm-6">
                             <div>
                                 <span class="text-sm text-grey-m2 align-middle">To:</span>
-                                <span class="text-600 text-110 text-blue align-middle">{{ $cliente->name}}</span>
+                                <span class="text-600 text-110 text-blue align-middle">{{ $cliente->name ?? ''}}</span>
                             </div>
 
                             <div class="text-grey-m2">
                                 <div class="ms-4 my-3">
-                                    {{ $dados_cliente->cpf }}
+                                    {{ $dados_cliente->cpf ?? ''}}
                                 </div>
                                 <div class="ms-4 my-1">
                                     Jacareí
@@ -89,8 +83,8 @@
                     <div class="row text-600 text-white bgc-default-tp1 py-25">
                         <div class="d-none d-sm-block col-1">#</div>
                         <div class="col-9 col-sm-5">Produto</div>
-                        <div class="d-none d-sm-block col-4 col-sm-2">Qtd</div>
-                        <div class="d-none d-sm-block col-sm-2">Valor</div>
+                        <div class="d-none d-sm-block col-4 col-sm-2 text-end">Qtd</div>
+                        <div class="d-none d-sm-block col-sm-2 text-end">Valor</div>
                         <div class="col-2 text-end px-5">Total</div>
                     </div>
 
@@ -100,8 +94,8 @@
                         <div class="row mb-2 mb-sm-0 py-25">
                             <div class="d-none d-sm-block col-1">{{ $pedido->produto->id}}</div>
                             <div class="col-9 col-sm-5">{{ $pedido->produto->nome}}</div>
-                            <div class="d-none d-sm-block col-2"> {{ getmoney($pedido->qtd) }}</div>
-                            <div class="d-none d-sm-block col-2 text-95">{{ getmoney($pedido->produto->valor) }}</div>
+                            <div class="d-none d-sm-block col-2 text-end"> {{ getmoney($pedido->qtd) }}</div>
+                            <div class="d-none d-sm-block col-2 text-95 text-end">{{ getmoney($pedido->produto->valor) }}</div>
                             <div class="col-2 text-secondary-d2 text-end px-5">{{ getmoney($pedido->valor) }}</div>
                         </div>
                         
@@ -142,17 +136,27 @@
 
                     <div class="row mt-3">
 
-                            <div class="col-12 col-sm-7 text-grey-d2 text-95 mt-2 mt-lg-0">
+                            <div class="col-12 col-sm-7 text-grey-d2 text-95 mt-3 pt-2 mt-lg-0">
                                 Extra note such as company or payment information...
+
+                                <div class="row mt-2">
+                                    <div class="col-6 mt-5">
+                                        <h5 class="font-18">Meio de pagamento</h5>
+                                    </div>
+                                    <div class="col-5 mt-4">
+                                        <img src="{{asset('img/integracoes/eadsimples.png')}}" class="img-fluid ">
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
+
                                 <div class="row my-2">
                                     <div class="col-7 text-end">
                                         Sub_total
                                     </div>
                                     <div class="col-5 text-end">
-                                        <span class="text-120 text-secondary-d1 text-end px-2">{{ getMoney($pedido->valor) }}</span>
+                                        <span class="text-120 text-secondary-d1 text-end pe-3">{{ getMoney($pedido->valor) }}</span>
                                     </div>
                                 </div>
 
@@ -161,16 +165,16 @@
                                         cupom desconto
                                     </div>
                                     <div class="col-5 text-end text-danger pe-2">
-                                        <span class="text-110 text-danger-d1 px-3">-{{ getMoney($pedido->valor_desconto) }}</span>
+                                        <span class="text-110 text-danger-d1 pe-4">-{{ getMoney($pedido->valor_desconto) }}</span>
                                     </div>
                                 </div>
 
                                 <div class="row my-2 align-items-center bgc-primary-l3 p-2">
-                                    <div class="col-7 text-dark text-end">
+                                    <div class="col-7 text-150 text-dark text-end">
                                         Total
                                     </div>
                                     <div class="col-5 text-end text-dark">
-                                        <span class="text-150 text-dark-d3">{{ getMoney($pedido->valor_final) }}</span>
+                                        <span class="text-150 text-dark-d3 pe-2">{{ getMoney($pedido->valor_final) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -183,10 +187,12 @@
                     <div class="row">
 
                         <div class="col-7">
-                            <span class="text-secondary-d1 text-105">Sistema Dvelopers  - Ticket Pay</span>
+                            <span class="text-secondary-d1 text-105 mt-2">Sistema Dvelopers  - Ticket Pay</span>
                         </div>
-                        <div class="col-4 text-end me-1">
-                            <a href="#" class="btn btn-success btn-bold px-4 float-right mt-1 mt-lg-0">Pagar</a>
+
+                        <div class="col-5 text-end pe-5">
+                                <a class="btn bg-white btn-info mx-1px text-dark text-95" href="#" data-title="Print">
+                            <i class="mr-1 fa fa-print text-primary-m1 text-150 w-2 me-4"></i>Print</a>
                         </div>
                         
                     </div>

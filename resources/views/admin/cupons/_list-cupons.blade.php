@@ -1,10 +1,12 @@
 
    <div class="row">
-            <table class="table mt-1 arial14-font" id="categorias_table">
+            <table class="table mt-1 arial14-font" id="cupons_table">
                 <thead class="cabecalho">
                     <tr>
                        
                         <th scope="col">Código</th>
+                        <th scope="col">Produto</th>
+
                         <th scope="col">Quantidade</th>
                         <th scope="col">Valor</th>
                         <th scope="col">Tipo</th>
@@ -20,6 +22,7 @@
                     <tr>
                        
                         <td>{{$cupom->codigo ?? ''}}</td>
+                        <td>{{$cupom->produto->nome ?? ''}}</td>
                         <td class="text-center">{{$cupom->qtd}}/{{$cupom->pedidos->count()}}</td>
 
                
