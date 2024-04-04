@@ -58,7 +58,7 @@
                     <select class="form-select" id="grupoSelect" name="id_produto" required>
                         <option value="" disabled selected>Selecione</option>
                     @foreach($produtos as $grupo)
-                        <option value="{{$grupo->id}}">{{ $grupo->descricao}}</option>
+                        <option value="{{$grupo->id}}">{{ $grupo->nome}}</option>
                     @endforeach
                    </select>
             </div>

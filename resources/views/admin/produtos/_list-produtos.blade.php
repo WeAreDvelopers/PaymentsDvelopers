@@ -19,7 +19,7 @@
                 @foreach($produtos as $k => $prod)
                     <tr>
                        
-                        <td>{{$prod->descricao ?? ''}}</td>
+                        <td>{{$prod->nome ?? ''}}</td>
                         <td>
                             <a href="{{route('site.pagamento',['token'=>$prod->token])}}" target="_blank" class="btn btn-sm btn-primary">
                                 Link</a>
@@ -27,22 +27,20 @@
                         
                         <td>{{getMoney($prod->valor) ?? ''}}</td>
 
-                <!-- TOGGLE SWITCH -->
-                    @if($prod->status == 'ativo')
-                          <td>
-                              <label class="switch">
-                                <input type="checkbox" checked class="status-produto" data-id="{{$prod->id}}">
-                                <span class="slider round"></span>
-                              </label>
-                          </td>
-                     @else    
-                           <td>
-                              <label class="switch">
-                                <input type="checkbox" class="status-produto" data-id="{{$prod->id}}">
-                                <span class="slider round"></span>
-                              </label>
-                          </td> 
-                    @endif
+                        <td>
+                        <div class="form-check form-switch">
+                                        <input class="form-check-input status-categoria"
+                                         type="checkbox" name="status" role="switch" 
+                                          value="ativo"
+                                          data-id="{{$prod->id}}"
+                                          @if($prod->status == 'ativo')
+                                            checked
+                                            @endif
+                                            >
+                                        <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
+                                    </div>
+                        </td>
+             
                             <td>
                                 <a href="{{route('admin.produtos.edit', $prod->id)}}" class="btn btn-icon-only btn-secondary"> <i class="fa-solid fa-pencil"></i> </a>
                                 <a href="{{route('admin.produtos.delete', $prod->id) }}" class="btn btn-icon-only btn-danger deletar-produtos"> <i class="fa-solid fa-trash"></i>           

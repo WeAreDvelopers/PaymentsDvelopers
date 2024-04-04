@@ -83,20 +83,20 @@ if (! function_exists('status')) {
 	function status($value){
 		if($value){
 		$array = [
-			'active'=>
+			'ativo'=>
 				[
 					'title'=>'Ativo',
-					'color'=> 'badge-success',
+					'color'=> 'text-bg-success',
 				],
-			'inactive'=>
+			'inativo'=>
 				[
 					'title'=>'Inativo',
-					'color'=> "badge-warning",
+					'color'=> "text-bg-warning",
 				],
 			'removed'=>
 				[
 					'title'=>'Removido',
-					'color'=> "badge-danger"
+					'color'=> "text-bg-danger"
 				]
 			];
 		return '<span class="badge '.$array[$value]['color'].'">'.$array[$value]['title'].'</span>';

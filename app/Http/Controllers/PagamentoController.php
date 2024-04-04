@@ -9,11 +9,14 @@ use App\Models\Empresa;
 use App\Models\EmpresaPagamento;
 use App\Models\Empresas;
 use App\Models\Leads;
+use App\Models\Pedidos;
+use App\Models\PedidosItens;
 use App\Models\Planos;
 use App\Models\Produtos;
 use App\Models\User;
 use App\Models\UserComunicacao;
 use App\Models\UserTempData;
+use App\Services\APIManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,13 +36,16 @@ class PagamentoController extends Controller
     
     
     public function __construct(){
-     
+        
+
+
             $this->urlBase = env('BASE_ASAAS'); 
            // $this->token = env('TOKEN_ASAAS'); 
     }
 
 
     public function index(Request $request,$token = null){
+      
       
        $produto = Produtos::where('token',$token)->first();
        $sessionID = session()->getId();
@@ -83,7 +89,16 @@ class PagamentoController extends Controller
     public function carrinho(Request $request){
         $carrinho = Carrinho::where('session_id',session()->getId())->first();
         $produto = $carrinho->produto;
-        return view('include._item',compact('carrinho','produto'));
+
+        $cupons = $produto->cupons;
+        $totalDisponivel = 0;
+        
+         foreach($cupons as $k => $v){
+           $totalDisponivel += $v->cuponsDisponiveis($produto->id);
+         }
+
+         
+        return view('include._item',compact('carrinho','produto','totalDisponivel'));
     }
     public function capturaLead(Request $request,$token = null){
         $data = $request->except('_token');
@@ -125,7 +140,9 @@ class PagamentoController extends Controller
         }
         $customerInfo = $customerInfo['data'];
        
-         $payment = $this->criarAssinatura($customerInfo['id_asaas'], $dados);
+        $payment = $this->criarAssinatura($customerInfo, $dados);
+
+
         if($payment['status'] == 'error'){
             return response()->json([
                 'status' => 'error',
@@ -238,7 +255,9 @@ class PagamentoController extends Controller
         });
      }
 
-    public function criarAssinatura($id_asaas,$data){
+    public function criarAssinatura($customers,$data){
+
+                 $id_asaas = $customers['id_asaas'];
                 $now = Carbon::now()->addYear();
                 $carrinho = Carrinho::where('session_id',session()->getId())->first();
 
@@ -270,7 +289,7 @@ class PagamentoController extends Controller
                         "value" => $totalValue,
                         "dueDate" => date('Y-m-d'),
                         "description" => "Assinatura " . $carrinho->produto->name,
-                    
+                        "maxPayments" => $carrinho->produto->max_parcelas,
                         "remoteIp" => $remoteIp
                     ];
 
@@ -316,20 +335,38 @@ class PagamentoController extends Controller
             }
          
         
-                if ($response->failed()) {
-                    return ['status'=>'error','erros'=> $response->json()];
-                }
-                $response = $response->json();
-
-              
-         
-                
+            if ($response->failed()) {
+                return ['status'=>'error','erros'=> $response->json()];
+            }
+            $response = $response->json();
+    
             $this->vencimento = $now->format('d/m/Y');
             $this->valor = $totalValue;
-            
-                return ['status'=>'ok','data'=> $response['id']];;
-    }
 
+
+            $this->criaPedido($customers, $carrinho);
+            return ['status'=>'ok','data'=> $response['id']];;
+    }
+    public function criaPedido($user,Carrinho $carrinho){
+        $pedido = Pedidos::create([
+            'id_user'           => $user['id'],
+           'id_empresa'         =>$carrinho->produto->empresa->id,
+            'id_cupom'          => $carrinho->id_cupom,
+            'valor'             => $carrinho->valor,
+            'valor_desconto'    => $carrinho->valor - $carrinho->valor_final,
+            'valor_final'       =>  $carrinho->valor_final,
+        ]);
+        PedidosItens::create([
+            'id_pedido'         => $pedido->id,
+            'id_produto'        => $carrinho->id_produto,
+            'valor'             => $carrinho->valor,
+            'valor_desconto'    => $carrinho->valor - $carrinho->valor_final,
+            'valor_final'       =>  $carrinho->valor_final,
+        ]);
+      
+        $servico = new APIManager();
+        $servico->start($pedido);
+    }
     public function saveUserData(Request $request){
         $data = $request->except('_token');
 

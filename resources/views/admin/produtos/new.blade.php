@@ -2,9 +2,10 @@
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-md-12">
-        <form id="cadastrar-produtos" action="{{route('admin.produtos.store')}}">
+<form id="cadastrar-produtos" action="{{route('admin.produtos.store')}}">
             @csrf
+    <div class="col-md-12">
+       
             <div class="card">
                 <div class="card-body">
 
@@ -40,15 +41,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-3 me-5">
+                                    <span class="titulo"> Máximo de Parcelas: *</span>
+                                    <input type="number" name="max_parcelas" value="" class="form-control" required>
+                                </div>
+                                <div class="form-group col-sm-3 me-5">
                                     <span class="titulo"> Status: </span>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" name="status" role="switch" value="ativo" id="flexSwitchCheckChecked" checked>
                                         <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
                                     </div>
                                 </div>
-
-
-
                             </div>
                         </div>
                     </div>
@@ -63,10 +65,40 @@
 
 
     </div>
-    <div class="card mt-3">
-        <div class="card-body text-end">
+   
 
-            <button class="btn btn-success m-0" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i> Salvar</button>
+    @if(empresa()->checkIntegracao('eadsimples')->status == 'ativo')
+    <div class="card mt-3">
+       <div class="card-body">
+        <div class="row">
+            <div class="col-2">
+            <img src="{{asset('img/integracoes/eadsimples.png')}}" style="height: 50px; width: auto;" alt="">
+            </div>
+            <div class="col">
+                    <p>Selecione o produto relacionado em sua conta do EAD Simples</p>
+                    <select name="ead_simples_curso" id="" class="form-select">
+                        <option value="">Selecione</option>
+                        <option value="PROD1">Produto 1</option>
+                        <option value="PROD2">Produto 2</option>
+                        <option value="PROD3">Produto 3</option>
+                    </select>
+            </div>
+            </div>     
+        </div>   
+    </div>
+    @endif
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col"> 
+                    <a class="btn btn-primary m-0" href="{{route('admin.produtos.index')}}"><i class="fa fa-fw fa-lg fa-arrow-left"></i> Voltar</a>
+                </div>
+                <div class="col text-end">
+                <button class="btn btn-success m-0" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i> Salvar</button>
+                </div>
+            </div>
+           
 
         </div>
     </div>

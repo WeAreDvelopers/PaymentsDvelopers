@@ -10,12 +10,8 @@
     <div class="col-sm-4 col-12">
         <div class="card">
             <div class="card-header text-center">
-              
-            @if(empresa()->checkIntegracao($v)->status == 'ativo')
-                        Ativo
-                       @else
-                        Inativo
-                       @endif
+              {!!status(empresa()->checkIntegracao($v)->status)!!}
+           
             </div>
             <div class="card-body">
                 

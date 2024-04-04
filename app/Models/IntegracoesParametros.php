@@ -18,4 +18,12 @@ class IntegracoesParametros extends Model
         'token_private',
         'ativado',
     ];
+
+    public function apiUrl(){
+        if($this->ativado == 'sandobx'){
+            return $this->endpoint_sandbox;
+        }else{
+            return $this->endpoint_producao;
+        }
+    }
 }

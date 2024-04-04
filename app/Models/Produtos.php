@@ -45,5 +45,9 @@ class Produtos extends Model
         return  $this->hasOne(Pedidos::class,'id_cupom','id');
     }
 
+    public function produtosEadSimples(){
+        return $this->hasOne(ProdutosEADSimples::class,'id_produto','id');
+    }
+
    
 }

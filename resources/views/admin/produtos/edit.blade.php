@@ -3,12 +3,16 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-12">
-        <form id="cadastrar-produtos" action="{{route('admin.produtos.store')}}">
+        <form id="cadastrar-produtos" action="{{route('admin.produtos.update',['id'=>$produto->id])}}">
             @csrf
             <div class="card">
                 <div class="card-body">
 
-
+<div class="row">
+    <div class="col-2">Preview</div>
+    <div class="col"> <a href="{{route('site.pagamento',['token'=>$produto->token])}}" target="_blank" class="btn btn-sm btn-primary">
+                                Link</a></div>
+</div>
 
                     <div class="row">
                         <div class="col-auto">
@@ -40,15 +44,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group col-sm-3 me-5">
+                                    <span class="titulo"> Máximo de Parcelas: *</span>
+                                    <input type="number" name="max_parcelas" value="{{$produto->max_parcelas}}" class="form-control " required>
+                                </div>
+                                <div class="form-group col-sm-3 me-5">
                                     <span class="titulo"> Status: </span>
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" name="status" role="switch" value="ativo" id="flexSwitchCheckChecked" @if($produto->status == 'ativo') checked @endif >
                                         <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
                                     </div>
                                 </div>
-
-
-
                             </div>
                         </div>
                     </div>
@@ -63,6 +68,27 @@
 
 
     </div>
+    
+    @if(empresa()->checkIntegracao('eadsimples')->status == 'ativo')
+    <div class="card mt-3">
+       <div class="card-body">
+        <div class="row">
+            <div class="col-2">
+            <img src="{{asset('img/integracoes/eadsimples.png')}}" style="height: 50px; width: auto;" alt="">
+            </div>
+            <div class="col">
+                    <p>Selecione o produto relacionado em sua conta do EAD Simples</p>
+                    <select name="ead_simples_curso" id="" class="form-select">
+                        <option value="">Selecione</option>
+                        <option value="PROD1" @if($produto->produtosEadSimples->id_produto_ead == "PROD1") selected @endif >Produto 1</option>
+                        <option value="PROD2" @if($produto->produtosEadSimples->id_produto_ead == "PROD2") selected @endif >Produto 2</option>
+                        <option value="PROD3" @if($produto->produtosEadSimples->id_produto_ead == "PROD3") selected @endif >Produto 3</option>
+                    </select>
+            </div>
+            </div>     
+        </div>   
+    </div>
+    @endif
     <div class="card mt-3">
         <div class="card-body text-end">
 
@@ -85,7 +111,7 @@
         $("#msg-error").addClass('d-none');
 
         $.ajax({
-            url: '{{route("admin.produtos.store")}}',
+            url: $(this).attr('action'),
             type: "POST",
             data: formData,
             success: function(response) {
@@ -95,8 +121,8 @@
                     text: "Cadastro realizado com sucesso!.",
                     icon: "success",
                 });
-                $("#cadastrar-produtos")[0].reset();
-                $(".preview").html('')
+               
+              
             },
 
             error: function(response) {

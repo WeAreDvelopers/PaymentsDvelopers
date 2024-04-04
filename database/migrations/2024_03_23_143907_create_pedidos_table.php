@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
             $table->integer('id_user');
-            $table->integer('id_produto');
+            $table->integer('id_empresa');
             $table->integer('id_cupom')->nullable();
             $table->decimal('valor',10,2);
             $table->decimal('valor_desconto',10,2)->nullable();
