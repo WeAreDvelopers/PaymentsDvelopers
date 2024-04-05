@@ -8,15 +8,15 @@
 
         <h1 class="page-title text-secondary-d1">
             Pedido
-            <small class="page-info">
+            <small class="page-info text-uppercase">
                 <i class="fa fa-angle-double-right text-80"></i>
-                ID: 509-000{{$pedido->id}}
+                Nº: {{$pedido->numero_pedido}}
             </small>
         </h1>
 
         <div class="page-tools">
             
-            <!-- Modal Close -->
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
         </div>
     </div>
@@ -25,14 +25,7 @@
         <div class="row mt-4">
 
             <div class="col-12 col-lg-12">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="text-center text-150">
-                            <i class="fa fa-book fa-2x text-success-m2 mr-1"></i>
-                            <span class="text-default-d3">Payment Dvelopers </span>
-                        </div>
-                    </div>
-                </div>
+               
                 <!-- .row -->
 
                 <hr class="row brc-default-l1 mx-n1 mb-4" />
@@ -42,18 +35,16 @@
 
                     <div class="col-sm-6">
                             <div>
-                                <span class="text-sm text-grey-m2 align-middle">To:</span>
-                                <span class="text-600 text-110 text-blue align-middle">{{ $cliente->name ?? ''}}</span>
+                                <span class="text-sm text-grey-m2 align-middle">Cliente:</span>
+                                <span class="text-600 text-110 text-blue align-middle">{{ $pedido->cliente->name}}</span>
                             </div>
 
                             <div class="text-grey-m2">
                                 <div class="ms-4 my-3">
-                                    {{ $dados_cliente->cpf ?? ''}}
+                                    {{ $pedido->cliente->cpf ?? ''}}
                                 </div>
-                                <div class="ms-4 my-1">
-                                    Jacareí
-                                </div>
-                                <div class="my-1"><i class="fa fa-phone fa-flip-horizontal text-secondary"></i> <b class="text-600">{{ $dados_cliente->telefone }}</b></div>
+                              
+                                <div class="my-1"><i class="fa fa-phone fa-flip-horizontal text-secondary"></i> <b class="text-600">{{ $pedido->cliente->dados->telefone }}</b></div>
                             </div>
                     </div>
                     <!-- /.col -->
@@ -62,14 +53,18 @@
                         <hr class="d-sm-none" />
                             <div class="text-grey-m2">
                                 <div class="mt-1 mb-2 text-secondary-m1 text-600 text-125">
-                                    Invoice
+                                    Pedido
                                 </div>
 
-                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">ID:</span> 509-000{{$pedido->id}}</div>
+                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Nº:</span>{{$pedido->numero_pedido}}</div>
 
-                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Data Venda:</span> 01/04/2023</div>
+                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Data Venda:</span> {{$pedido->created_at->format('d/m/Y')}}</div>
 
-                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i> <span class="text-600 text-90">Status:</span> <button class="btn btn-sm btn-warning mt-3">Aprovado</button></div>
+                                <div class="my-2"><i class="fa fa-circle text-blue-m2 text-xs mr-1"></i>
+                                 <span class="text-600 text-90">Status:</span> 
+                                 <span class="badge text-bg-success">Aprovado</span>
+
+                                </div>
                             </div>
                     </div>
                     <!-- /.col -->
@@ -80,7 +75,7 @@
 
                 <div class="mt-4">
 
-                    <div class="row text-600 text-white bgc-default-tp1 py-25">
+                    <div class="row text-600 text-white bg-primary py-25">
                         <div class="d-none d-sm-block col-1">#</div>
                         <div class="col-9 col-sm-5">Produto</div>
                         <div class="d-none d-sm-block col-4 col-sm-2 text-end">Qtd</div>
@@ -90,14 +85,15 @@
 
 
                     <div class="text-95 text-secondary-d3">
-
-                        <div class="row mb-2 mb-sm-0 py-25">
-                            <div class="d-none d-sm-block col-1">{{ $pedido->produto->id}}</div>
-                            <div class="col-9 col-sm-5">{{ $pedido->produto->nome}}</div>
-                            <div class="d-none d-sm-block col-2 text-end"> {{ getmoney($pedido->qtd) }}</div>
-                            <div class="d-none d-sm-block col-2 text-95 text-end">{{ getmoney($pedido->produto->valor) }}</div>
-                            <div class="col-2 text-secondary-d2 text-end px-5">{{ getmoney($pedido->valor) }}</div>
+    @foreach ($pedido->itens as $k => $item)
+                        <div class="row mb-2 mb-sm-0 py-25 border-bottom">
+                            <div class="d-none d-sm-block col-1">{{ $item->produto->id}}</div>
+                            <div class="col-9 col-sm-5">{{ $item->produto->nome}}</div>
+                            <div class="d-none d-sm-block col-2 text-end">1</div>
+                            <div class="d-none d-sm-block col-2 text-end">{{ getmoney($item->produto->valor,'R$') }}</div>
+                            <div class="col-2 text-secondary-d2 text-end ">{{ getmoney($item->valor_final,'R$') }}</div>
                         </div>
+                        @endforeach
                         
                     </div>
 
@@ -137,44 +133,44 @@
                     <div class="row mt-3">
 
                             <div class="col-12 col-sm-7 text-grey-d2 text-95 mt-3 pt-2 mt-lg-0">
-                                Extra note such as company or payment information...
+                               
 
-                                <div class="row mt-2">
+                                <!-- <div class="row mt-2">
                                     <div class="col-6 mt-5">
                                         <h5 class="font-18">Meio de pagamento</h5>
                                     </div>
                                     <div class="col-5 mt-4">
                                         <img src="{{asset('img/integracoes/eadsimples.png')}}" class="img-fluid ">
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
 
                             <div class="col-12 col-sm-5 text-grey text-90 order-first order-sm-last">
 
                                 <div class="row my-2">
                                     <div class="col-7 text-end">
-                                        Sub_total
+                                        Sub Total
                                     </div>
                                     <div class="col-5 text-end">
-                                        <span class="text-120 text-secondary-d1 text-end pe-3">{{ getMoney($pedido->valor) }}</span>
+                                        <span class=" text-end ">{{ getMoney($pedido->valor,'R$') }}</span>
                                     </div>
                                 </div>
 
                                 <div class="row my-2">
-                                    <div class="col-7 text-danger text-end">
-                                        cupom desconto
+                                    <div class="col-7  text-end">
+                                        Desconto
                                     </div>
-                                    <div class="col-5 text-end text-danger pe-2">
-                                        <span class="text-110 text-danger-d1 pe-4">-{{ getMoney($pedido->valor_desconto) }}</span>
+                                    <div class="col-5 text-end text-danger ">
+                                        <span class=" text-danger-d1 ">-{{ getMoney($pedido->valor_desconto,'R$') }}</span>
                                     </div>
                                 </div>
 
-                                <div class="row my-2 align-items-center bgc-primary-l3 p-2">
-                                    <div class="col-7 text-150 text-dark text-end">
-                                        Total
+                                <div class="row my-2 align-items-center bgc-primary-l3 ">
+                                    <div class="col-7 text-dark text-end">
+                                       <strong> Total</strong>
                                     </div>
                                     <div class="col-5 text-end text-dark">
-                                        <span class="text-150 text-dark-d3 pe-2">{{ getMoney($pedido->valor_final) }}</span>
+                                    <strong>{{ getMoney($pedido->valor_final,'R$') }}</strong>
                                     </div>
                                 </div>
                             </div>
@@ -182,7 +178,7 @@
                     </div>
 
 
-                    <hr />
+                    <hr class="border-5 border-dark border-top" />
 
                     <div class="row">
 
@@ -190,10 +186,10 @@
                             <span class="text-secondary-d1 text-105 mt-2">Sistema Dvelopers  - Ticket Pay</span>
                         </div>
 
-                        <div class="col-5 text-end pe-5">
+                        <!-- <div class="col-5 text-end">
                                 <a class="btn bg-white btn-info mx-1px text-dark text-95" href="#" data-title="Print">
-                            <i class="mr-1 fa fa-print text-primary-m1 text-150 w-2 me-4"></i>Print</a>
-                        </div>
+                            <i class="mr-1 fa fa-print text-primary-m1  w-2 me-4"></i>imprimir</a>
+                        </div> -->
                         
                     </div>
             </div>

@@ -347,18 +347,13 @@ $("body").on('click','#btnPayment',function(e){
 
                 if(data.status == 'ok'){
                
-                  
-                gtag('event', 'conversion', {'send_to': 'AW-10897126470/snesCMbJ1PQYEMbok8wo'});
+                 window.location.href = data.url;
+                
 
 
                 
-                Swal.fire(
-                    'Tudo certo!',
-                    'Você receberá um email com seus dados de acesso ao sistema!',
-                    'success'
-                )
-                $(paymentElement).addClass('d-none');
-                $(thankYou).removeClass('d-none');
+               
+             
             }else{
                 var html = ''
                 $(data.data).each(function(i,v){

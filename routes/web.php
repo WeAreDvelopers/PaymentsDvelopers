@@ -37,6 +37,7 @@ use App\Http\Controllers\PdfController;
 
     Route::name('site.')->group(function () {
             Route::get('/pagamento/{token?}', [PagamentoController::class, 'index'])->name('pagamento');
+            Route::get('/obrigado/{pedido?}', [PagamentoController::class, 'obrigado'])->name('obrigado');
             Route::post('save-data', [PagamentoController::class, 'saveUserData'])->name('saveUserData');
             Route::get('/pdf', [PdfController::class, 'adicionarInformacoes'])->name('pdf');
             Route::get('/email', [IndexController::class, 'email'])->name('email');

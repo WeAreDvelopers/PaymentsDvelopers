@@ -17,4 +17,7 @@ class PedidosItens extends Model
             'valor_desconto',
             'valor_final',
     ];
+    public function produto(){
+        return  $this->hasOne(Produtos::class,'id','id_produto');
+    }
 }

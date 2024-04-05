@@ -37,7 +37,10 @@
 
                     <div class="modal-dialog modal-lg" >
                         <div class="modal-content">
-                        
+                        <div class="modal-header">
+                                <h5 class="modal-title">Detalhes Pedido</h5>
+                                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close"><i class="fa-regular fa-circle-xmark"></i></button>
+                            </div>
                             <div class="modal-body" id="conteudo-pedido">
                                             
                             </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Carrinho;
 use App\Models\ClientesTokens;
 use App\Models\Cupons;
+use App\Models\DadosClientes;
 use App\Models\Empresa;
 use App\Models\EmpresaPagamento;
 use App\Models\Empresas;
@@ -162,7 +163,8 @@ class PagamentoController extends Controller
         return response()->json([
             'status'    => 'ok',
             'message'   =>  'Payment created successfully!',
-            'paymentInfo'   =>  $payment
+            'paymentInfo'   =>  $payment,
+            'url'           =>$payment['response']['url'],
         ]);
      }
 
@@ -188,7 +190,12 @@ class PagamentoController extends Controller
                 'email' =>  $dados['email'],
                 'password'  =>  Hash::make($senha),
                 'role'  =>  'cliente',
-              
+            ]);
+            DadosClientes::create([
+                'id_user'=>$costumer->id,
+                'cpf' => @$dados['cpf'],
+                'telefone'=>$dados['celular'],
+               
             ]);
             $costumer->markEmailAsVerified();
 
@@ -344,11 +351,14 @@ class PagamentoController extends Controller
             $this->valor = $totalValue;
 
 
-            $this->criaPedido($customers, $carrinho);
-            return ['status'=>'ok','data'=> $response['id']];;
+            $response['url'] = $this->criaPedido($customers, $carrinho)['url'];
+            return ['status'=>'ok','data'=> $response['id'],'response'=>$response];;
     }
     public function criaPedido($user,Carrinho $carrinho){
+        $pedidosTotal = Pedidos::where('id_empresa',$carrinho->produto->empresa->id)->count() + 1;
+        $numero_pedido = Str::random(6) . '-'. str_pad($pedidosTotal , 4 , '0' , STR_PAD_LEFT);
         $pedido = Pedidos::create([
+            'numero_pedido'     => strtoupper($numero_pedido),
             'id_user'           => $user['id'],
            'id_empresa'         =>$carrinho->produto->empresa->id,
             'id_cupom'          => $carrinho->id_cupom,
@@ -366,6 +376,11 @@ class PagamentoController extends Controller
       
         $servico = new APIManager();
         $servico->start($pedido);
+        return [
+            'status'=>'ok',
+            'url'=> route('site.obrigado',['pedido'=>$numero_pedido])
+            ]
+        ;;
     }
     public function saveUserData(Request $request){
         $data = $request->except('_token');
@@ -403,6 +418,11 @@ class PagamentoController extends Controller
         ]);
 
         return true;
+    }
+
+    public function obrigado(Request $request,$pedido){
+        $pedido = Pedidos::where('numero_pedido',$pedido)->first();
+        return view('sucesso',compact('pedido'));
     }
 
 }

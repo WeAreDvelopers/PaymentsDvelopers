@@ -11,7 +11,7 @@ class Pedidos extends Model
 
     protected $table = 'pedidos';
     protected $fillable = [
-
+        'numero_pedido',
         'id_user',
         'id_produto',
         'id_empresa',
@@ -28,7 +28,7 @@ class Pedidos extends Model
     public function empresa(){
         return  $this->hasOne(Empresas::class,'id','id_empresa');
     }
-    public function usuario(){
+    public function cliente(){
         return  $this->hasOne(User::class,'id','id_user');
     }
 
@@ -36,7 +36,5 @@ class Pedidos extends Model
         return  $this->hasOne(Cupons::class,'id','id_cupom');
     }
 
-    public function dados(){
-        return  $this->hasOne(DadosClientes::class,'id','id_cupom');
-    }
+  
 }

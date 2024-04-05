@@ -16,6 +16,9 @@ class EadSimplesService{
        
         $this->apiUrl = $integracao->parametros->apiUrl();
     }
+    public function start($dados){
+
+    }
     protected function credenciais(){
         $response = Http::post($this->apiUrl . '/alunos', [
             'api_key' => $this->apiKey,

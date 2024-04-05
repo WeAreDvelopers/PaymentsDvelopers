@@ -24,17 +24,28 @@ class PedidosController extends Controller
         
     }
 
-// Preview
-    public function preview (Request $request, $id){
+// Preview versão do weslley
+    // public function preview (Request $request, $id){
 
-        $cliente = Auth::user();
+    //     $cliente = Auth::user();
      
 
-        $dados_cliente = DadosClientes::where('id_user', $cliente->id)->first();
+    //     $dados_cliente = DadosClientes::where('id_user', $cliente->id)->first();
+       
+    //     $pedido = Pedidos::find($id);
+
+    //     return view('admin.pedidos.preview', compact('pedido', 'dados_cliente', 'cliente'));
+    // }
+    public function preview (Request $request, $id){
+
        
         $pedido = Pedidos::find($id);
 
-        return view('admin.pedidos.preview', compact('pedido', 'dados_cliente', 'cliente'));
+       
+       
+        
+
+        return view('admin.pedidos.preview', compact('pedido'));
     }
 
 
