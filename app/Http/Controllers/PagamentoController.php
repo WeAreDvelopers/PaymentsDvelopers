@@ -79,7 +79,7 @@ class PagamentoController extends Controller
                 return response(['msg'=>'Cupom inválido ou esgotado'],422);
            }
         }
-        $valorFinal = $cupom->calulaDesconto();
+        $valorFinal = $cupom->calculaDesconto();
         $this->atualizaCarrinho([
             'id_cupom'=>$cupom->id,
             'valor_final' => $valorFinal,
@@ -225,7 +225,7 @@ class PagamentoController extends Controller
 
             if ($response->failed()) {
                 //session()->flash('error', $response->json()['errors']);
-                return ['status'=>'error','data'=>$response->json()['errors']];
+                return ['status'=>'error','data'=>$response->json()];
                 
             }
 
