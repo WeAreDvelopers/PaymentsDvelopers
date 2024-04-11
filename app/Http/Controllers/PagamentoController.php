@@ -10,6 +10,7 @@ use App\Models\Empresa;
 use App\Models\EmpresaPagamento;
 use App\Models\Empresas;
 use App\Models\Leads;
+use App\Models\Media;
 use App\Models\Pedidos;
 use App\Models\PedidosItens;
 use App\Models\Planos;
@@ -47,7 +48,7 @@ class PagamentoController extends Controller
 
     public function index(Request $request,$token = null){
       
-      
+        
        $produto = Produtos::where('token',$token)->first();
        $sessionID = session()->getId();
        $carrinho = Carrinho::updateOrCreate([
@@ -98,7 +99,6 @@ class PagamentoController extends Controller
            $totalDisponivel += $v->cuponsDisponiveis($produto->id);
          }
 
-         
         return view('include._item',compact('carrinho','produto','totalDisponivel'));
     }
     public function capturaLead(Request $request,$token = null){
@@ -132,7 +132,7 @@ class PagamentoController extends Controller
         $empresa = $produto->empresa;
         // $companyInfo = $this->createBaseCompany($dados);
         $customerInfo = $this->createBaseCustomer($dados,$empresa);
-         //dd($customerInfo);
+
         if($customerInfo['status'] == 'error'){
             return response()->json([
                 'status' => 'error',
@@ -141,30 +141,32 @@ class PagamentoController extends Controller
         }
         $customerInfo = $customerInfo['data'];
        
-        $payment = $this->criarAssinatura($customerInfo, $dados);
-
-
-        if($payment['status'] == 'error'){
-            return response()->json([
-                'status' => 'error',
-                'data'=> $payment['erros'],
-            ]);
-        }
-        $customerInfo['id_pedido'] = $payment;
+        //$payment = $this->criarAssinatura($customerInfo, $dados);
+        $carrinho = Carrinho::where('session_id',session()->getId())->first();
+        $pedido = $this->criaPedido($customerInfo, $carrinho);
+        
+        // if($payment['status'] == 'error'){
+        //     return response()->json([
+        //         'status' => 'error',
+        //         'data'=> $payment['erros'],
+        //     ]);
+        // }
+        $customerInfo['pedido'] = $pedido['pedido']->toArray();
+        //$customerInfo['payment'] = $payment;
         $customerInfo['total'] = $this->valor;
         $customerInfo['vencimento'] = $this->vencimento;
        
-        $this->sendMail($customerInfo,'bem_vindo');
+        $this->sendMail($customerInfo,'compra');
         // $this->sendMail($customerInfo,'informacoes');
         if($this->bonus){
             $this->sendMail($customerInfo,'compra');
         }
-
+dd('a');
         return response()->json([
             'status'    => 'ok',
             'message'   =>  'Payment created successfully!',
-            'paymentInfo'   =>  $payment,
-            'url'           =>$payment['response']['url'],
+            'paymentInfo'   =>  @$payment,
+            'url'           => $pedido['url'],
         ]);
      }
 
@@ -250,15 +252,18 @@ class PagamentoController extends Controller
      }
  
      public function sendMail($userInfo, $view){
-     
-        // $userInfo = $userInfo->toArray();
-        $array =[
-            'bem_vindo' => 'Seja bem-vindo(a)! (guarde este e-mail)',
-            'informacoes' => 'Informações sobre o Pedido #'.str_replace("pay_","",$userInfo['id_pedido']['data']),
-            'compra' => 'E-book Disponível',
+       
+       
+        $logo = Media::find($userInfo['pedido']['empresa']['id_logo']);
+        
+        $userInfo['logo'] = $logo->fullpatch();
+       
+        $array = [
+            'bem_vindo' => 'Seja bem-vindo(a)!',
+            'informacoes' => 'Informações sobre o Pedido #'.$userInfo['pedido']['numero_pedido'],
         ];
         \Mail::send('emails.'.$view, $userInfo, function($message) use ($userInfo,$array,$view) {
-            $message->to($userInfo['email'], $userInfo['name'])->subject($array[$view]);    
+            $message->to($userInfo['email'], $userInfo['name'])->subject($array['informacoes']);    
         });
      }
 
@@ -351,8 +356,12 @@ class PagamentoController extends Controller
             $this->valor = $totalValue;
 
 
-            $response['url'] = $this->criaPedido($customers, $carrinho)['url'];
-            return ['status'=>'ok','data'=> $response['id'],'response'=>$response];;
+            
+            return ['status'=>'ok',
+            'data'=> $response['id'],
+            'response'=>$response,
+            'customer' => $customers
+        ];;
     }
     public function criaPedido($user,Carrinho $carrinho){
         $pedidosTotal = Pedidos::where('id_empresa',$carrinho->produto->empresa->id)->count() + 1;
@@ -377,8 +386,9 @@ class PagamentoController extends Controller
         $servico = new APIManager();
         $servico->start($pedido);
         return [
-            'status'=>'ok',
-            'url'=> route('site.obrigado',['pedido'=>$numero_pedido])
+            'status'    =>  'ok',
+            'pedido'    =>  $pedido,
+            'url'       =>  route('site.obrigado',['pedido'=>$numero_pedido])
             ]
         ;;
     }
@@ -421,7 +431,11 @@ class PagamentoController extends Controller
     }
 
     public function obrigado(Request $request,$pedido){
+
         $pedido = Pedidos::where('numero_pedido',$pedido)->first();
+        
+        // $servico = new APIManager();
+        // $servico->start($pedido);
         return view('sucesso',compact('pedido'));
     }
 

@@ -9,10 +9,8 @@
         }
     </style>
 </head>
-
 <body>
     <div id="tudo" style="padding:50px">
-
         <div style="
             background:#fff; 
             max-width:590px; 
@@ -26,7 +24,7 @@
             <table width="100%" align="center">
                 <tr>
                     <td align="center">
-                        <img src="{{asset('img/logo.png')}}" width="335" height="70" />
+                        <img src="{{asset($logo)}}" width="auto" height="70" />
                     </td>
                 </tr>
             </table>
@@ -50,8 +48,8 @@
             <tr>
                 <td align="center" style="font-family:'Open Sans',sans-serif; font-size:10px; font-weight:100;padding:30px">
                     <p><img src="{{asset('img/logo.png')}}" width="auto" height="20"/></p>
-                    <p>app.numerosnaomentem.com.br<br/>
-                        Copyright © {{date('Y')}} Números Não Mentem<br/>
+                    <p>dvelopers.com.br<br/>
+                        Copyright © {{date('Y')}} Dvelopers<br/>
                     </p>
                 </td>
             </tr>

@@ -5,6 +5,9 @@ namespace App\Services;
 use App\Models\ProdutosEADSimples;
 use Illuminate\Support\Facades\Http;
 
+
+use Illuminate\Support\Str;
+
 class EadSimplesService{
     protected $apiUrl;
     protected $apiKey;
@@ -17,37 +20,74 @@ class EadSimplesService{
         $this->apiUrl = $integracao->parametros->apiUrl();
     }
     public function start($dados){
-
+        $this->credenciais();
+        $idAluno = $this->cadastrarAluno($dados);
+        $this->matricularAluno($idAluno,$dados);
     }
     protected function credenciais(){
-        $response = Http::post($this->apiUrl . '/alunos', [
-            'api_key' => $this->apiKey,
-            'nome' => $dadosAluno['nome'],
-            'email' => $dadosAluno['email'],
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $this->apiUrl . '/token',
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => '',
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => 'POST',
+          CURLOPT_POSTFIELDS => 'username='.$this->integracao->parametros->cliente_id.'&password='.$this->integracao->parametros->token_private.'&grant_type=password',
+          CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/x-www-form-urlencoded'
+          ),
+        ));
+        
+        $response = json_decode(curl_exec($curl));
+        
+        curl_close($curl);
+
+        $this->apiKey = $response->access_token;
+    }
+    public function cadastrarAluno($pedido)
+    {
+        $search = Http::withHeaders([
+            'Authorization' => 'Bearer '.  $this->apiKey,
+        ])->get($this->apiUrl . '/v1/cadastro/search/'.'DV_'.$pedido->cliente->id)->json();
+     
+        if(count($search) > 0){
+           
+            return $search[0]['Id'];
+        };
+
+        $senhaAluno = Str::random(8);
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer '.  $this->apiKey,
+           
+        ])->post($this->apiUrl . '/v1/cadastro/add', [
+
+            'Nome'          => $pedido->cliente->name,
+            'Email'         => $pedido->cliente->email,
+            'Login'         => $pedido->cliente->email,
+            'Senha'         => $senhaAluno,
+            'IDExterno'     => 'DV_'.$pedido->cliente->id,
             // Outros campos de dados do aluno conforme necessário
         ]);
-    }
-    public function cadastrarAluno($dadosAluno)
-    {
-        $response = Http::post($this->apiUrl . '/alunos', [
-            'api_key' => $this->apiKey,
-            'nome' => $dadosAluno['nome'],
-            'email' => $dadosAluno['email'],
-            // Outros campos de dados do aluno conforme necessário
-        ]);
-
-        return $response->json();
+   
+        return $response->json()['Id'];
     }
 
-    public function matricularAluno($idAluno, $idCurso)
+    public function matricularAluno($idAluno, $pedido)
     {
-        $response = Http::post($this->apiUrl . "/cursos/{$idCurso}/matriculas", [
-            'api_key' => $this->apiKey,
-            'aluno_id' => $idAluno,
-            // Outros parâmetros de matrícula conforme necessário
-        ]);
-
-        return $response->json();
+        $response = [];
+        foreach($pedido->itens as $k => $v){
+           $response[] = Http::withHeaders([
+            'Authorization' => 'Bearer '.  $this->apiKey,
+            ])->post($this->apiUrl . '/v1/matricula/add', [
+                'CursoID'       => $v->produto->produtosEadSimples->id_produto_ead,
+                'CadastroID'    => $idAluno
+            ])->json();
+        }
+        return $response;
     }
 
     public function listarCursos()
