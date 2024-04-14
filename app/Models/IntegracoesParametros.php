@@ -20,7 +20,8 @@ class IntegracoesParametros extends Model
     ];
 
     public function apiUrl(){
-        if($this->ativado == 'sandobx'){
+      
+        if($this->ativado == 'sandbox'){
             return $this->endpoint_sandbox;
         }else{
             return $this->endpoint_producao;

@@ -2,8 +2,7 @@
    <div class="row">
             <table class="table mt-1 arial14-font" id="pedidos_table">
                 <thead class="cabecalho">
-                    <tr>
-                       
+                    <tr> 
                         <th scope="col">Pedido</th>
                        
                         <th scope="col">Cliente</th>
@@ -15,7 +14,6 @@
                         
                     </tr>
                 </thead>
-
                 <!--BODY-->
                 <tbody>
                 @foreach($pedidos as $k => $ped)
