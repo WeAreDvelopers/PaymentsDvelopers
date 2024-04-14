@@ -100,8 +100,7 @@ $("body").on('change', '.status-user', function () {
         success: function(response) {
         console.log(response);
 
-            $('#name').val('');
-            $('#email').val('');
+           $("#cadastrar-usuarios")[0].reset();
             
             $('#lista-Usuarios').html(response);
 

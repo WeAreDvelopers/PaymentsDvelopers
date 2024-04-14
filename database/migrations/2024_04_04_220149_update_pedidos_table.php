@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('pedidos', function (Blueprint $table) {
             $table->integer('numero_pedido')->nullable()->after('id');
+            $table->string('id_empresa')->nullable()->after('numero_pedido');
         });
     }
 
