@@ -1,5 +1,5 @@
 <li class="nav-item">
-          <a class="nav-link  active" href="">
+          <a class="nav-link  active" href="{{route('admin.dash.index')}}">
            
             <span class="nav-link-text ms-1">Dashboard</span>
           </a>

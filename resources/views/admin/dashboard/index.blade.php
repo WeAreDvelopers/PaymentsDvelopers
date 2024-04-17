@@ -2,218 +2,51 @@
 
 @section('assets')
 
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<!-- CSS Modal Pedido-->
+<link href="{{asset('css/modal-pedido.css')}}" rel="stylesheet" />
 @endsection
 
 @section('content')
-@if($empresas)
-<div class="card">
-    <div class="card-body">
-        <label for="">Empresas</label>
-       
-        <select name="" id="empresa" class="form-select">
-            <option value="">Selecione Empresa:</option>
-            @foreach($empresas as $k => $empre)
-            <option value="{{$empre->id}}">{{$empre->nome}}</option>
-            @endforeach
-        </select>
+
+<div>
+    @include('admin.dashboard.include._begin-pedidos')
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-12">
+   
+        <div class="card">
+            <div class="card-body">
+
+                <div id="dashboard-Pedidos">
+                    @include('admin.dashboard.include._grafico-pedidos')
+                </div> 
+           </div>
+        </div>
+
     </div>
 </div>
-@endif
-
-<div class="" id="viewempresa">
-    @include('admin.dashboard._dash')
-</div>
 
 @endsection
-
 
 @section('scripts')
-
-<script>
-var id = $('#idinput').val();
-console.log('id=' + id);
-function ultimosPagamentos() {
-    var id = $('#idinput').val();
-    var url = '{{ route("admin.dash.ultimosPagamentos") }}/' + id;
-    $.get(url, function(data) {
-        $("#listaPagamentos").html(data);
-    });
-}
-
-function graficoCategorias() {
-    var id = $('#idinput').val();
-    $.ajax({
-        url: '{{route("admin.dash.graficoCategorias")}}/' + id,
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            var labels = data.map(item => item.grupos);
-            var valores = data.map(item => item.categorias);
-
-            var ctx = document.getElementById('graficoPizza').getContext('2d');
-            var myPieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: valores,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                        ],
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                }
-            });
-        }
-    });
-}
-
-function graficoProdutos() {
-    var id = $('#idinput').val();
-    $.ajax({
-        url: '{{route("admin.dash.graficoProdutos")}}/' + id,
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            var labels = data.map(item => item.categorias);
-            var valores = data.map(item => item.produtos);
-
-            var ctx = document.getElementById('graficoPizza2').getContext('2d');
-            var myPieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: valores,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                        ],
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                }
-            });
-        }
-    });
-}
-
-function graficoPagamentos() {
-    var id = $('#idinput').val();
-    $.ajax({
-        url: '{{route("admin.dash.graficoPagamentos")}}/' + id,
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            var labels = data.map(item => item.formas_pagamentos);
-            var valores = data.map(item => item.pagamentos);
-
-            var ctx = document.getElementById('graficoPizza3').getContext('2d');
-            var myPieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: valores,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                        ],
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    responsive: true,
-                }
-            });
-        }
-    });
-}
-
-function graficoValores() {
-    var id = $('#idinput').val();
-    $.ajax({
-        url: '{{route("admin.dash.graficoValores")}}/' + id,
-        method: 'GET',
-        dataType: 'json',
-        success: function(data) {
-            var labels = data.map(item => item.formas_pagamentos);
-            var valores = data.map(item => item.valores);
-
-            var ctx = document.getElementById('graficoPizza4').getContext('2d');
-            var myPieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: valores,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.8)',
-                            'rgba(54, 162, 235, 0.8)',
-                            'rgba(255, 206, 86, 0.8)',
-                            'rgba(75, 192, 192, 0.8)',
-                            'rgba(153, 102, 255, 0.8)',
-                        ],
-                    }],
-                },
-                options: {
-    showAllTooltips: true
-}
-            });
-        }
-    });
-}
-
-setInterval(function() {
-    ultimosPagamentos();
-    graficoProdutos();
-    graficoCategorias();
-    graficoPagamentos();
-    graficoValores();
-}, 3000);
-
-window.onload = function () {
-    ultimosPagamentos();
-    graficoProdutos();
-    graficoCategorias();
-    graficoPagamentos();
-    graficoValores();
-    
-};
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 
 
-$("body").on("change", "#empresa", function(e) {
-    var idempresa = this.value;
+@include('admin.dashboard._script-charts')
 
-    
-        var url = '{{ route("admin.dash.buscar", ["id" => ":id"]) }}';
-        url = url.replace(':id', idempresa);
-
-        $.get(url, function(data) {
-            $("#viewempresa").html(data);
-            ultimosPagamentos();
-            graficoProdutos();
-            graficoCategorias();
-            graficoPagamentos();
-            graficoValores();
-        });
-});
-
-   
-</script>
 @endsection
+
+
+
+
+
+
+
+
+
+  

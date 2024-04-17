@@ -59,6 +59,7 @@ Auth::routes();
 Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () {
 
      Route::get('/', [HomeController::class, 'index'])->name('home');
+     
     Route::name('dash.')->prefix('dash')->controller(HomeController::class)->group(function () {
         Route::get('/index', 'index')->name('index');
         Route::get('/ultimosPagamentos/{id?}', 'ultimosPagamentos')->name('ultimosPagamentos');

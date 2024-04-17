@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Categorias;
+use App\Models\Cupons;
 use App\Models\Empresas;
 use App\Models\FormasPagamentos;
 use App\Models\Grupos;
 use App\Models\Pagamentos;
+use App\Models\Pedidos;
 use App\Models\Produtos;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
 class HomeController extends Controller
@@ -29,15 +32,68 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $empresas = null;
-      
-        if(Auth::user()->role == 'master'){
-            $empresas = Empresas::all();
-        
+       
+        $usersPorMes = User::query()
+        ->where('role', 'cliente')
+        ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count')
+        ->groupByRaw('YEAR(created_at), MONTH(created_at)')
+        ->orderByRaw('YEAR(created_at), MONTH(created_at)')
+        ->get();
+
+        $clientes = [
+            'labels' => [],
+            'qtd' => [],
+            
+        ];
+
+        $totalClientes = 0;
+    
+        foreach ($usersPorMes as $user) {
+            $clientes['labels'][] = date('F', mktime(0, 0, 0, $user->month, 1));
+            $clientes['qtd'][] = $user->count;
+            $totalClientes += $user->count;
         }
-        $id = null;
-        return view('admin.dashboard.index',compact('empresas', 'id'));
+        
+        $cliente_total = $totalClientes;
+        $cupons_total = Cupons::count();
+        $pedidos_total = Pedidos::count();
+        $faturamento = Pedidos::sum('valor_final');
+        
+        $produtos = [       
+            
+            'labels' => ['X-salada', 'Refrigerante', 'Agua', 'Pastel', 'Doces'],
+            'qtd' => [25, 30, 15, 10, 20],
+        ];
+
+        $produtosBar = [
+
+            'labels' => ['X-salada', 'Refrigerante', 'Agua', 'Pastel', 'Doces'],
+            'qtd' => [1, 3, 3, 2, 1],
+        ];
+
+        
+
+        $vendas = [
+            'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'],
+            'qtd' => [18, 47, 98, 30, 72, 56, 35, 61],
+        ];
+
+        $vendas1 = [
+            'labels' => ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August'],
+            'qtd' => [10, 40, 60, 20, 22, 27, 89, 52],
+        ];
+    
+        return view('admin.dashboard.index', compact('clientes','cliente_total','pedidos_total','faturamento',
+                    
+                     'produtos', 'produtosBar', 'vendas', 'vendas1', 'cupons_total'));
+        
     }
+
+
+
+
+
+
 
     public function buscar($id = null)
     {
