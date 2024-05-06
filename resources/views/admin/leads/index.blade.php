@@ -1,5 +1,12 @@
 @extends('layouts.app')
 
+@section('assets')
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<!-- CSS Modal Pedido-->
+<link href="{{asset('css/modal-pedido.css')}}" rel="stylesheet" />
+@endsection
+
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-12">
@@ -9,33 +16,35 @@
 
                 <div class="row mb-3">
                     <div class="col-7 ps-4 my-2">
-                        <h4>Produtos</h4>          
+                        <h4>Leads</h4>          
                     </div>
                    
                     <div class="col-5 my-2 pe-4 text-end">
-                    <a href="{{route('admin.produtos.new')}}" class="btn btn-primary " type="button" 
+                    <a href="#" class="btn btn-primary " type="button" 
                      >Cadastrar</a>
                     </div>
                 </div>
 
-       
-           
-
-                <div id="lista-Produtos">
-                    @include('admin.produtos._list-produtos')
+                <div id="lista-Pedidos">
+                    @include('admin.leads._list-leads')
                 </div> 
            </div>
         </div>
 
+
+            
+
     </div>
 </div>
+
+
 @endsection
 
 @section('scripts')
 <script>
 
 // DATA TABLE
-    $('#produtos_table').DataTable({
+    $('#leads_table').DataTable({
         
         "lengthMenu": [5, 10, 20],
         "pageLength": 8,
@@ -44,49 +53,54 @@
     }
     });
 
-// Select GRUPO
-   $("body").on('change', '.grupoSelect', function () {
- 
-         var grupoId = $(this).val();
-         var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-         $.ajax({
-             type: 'GET',
-             url: '/produtos/select_grupo/' + grupoId,
- 
-             success: function(data) {
 
-                 var options = '<option value="" disabled selected>Selecione</option>';
- 
-                 $.each(data, function(key, categoria) {
-                     options += '<option value="' + categoria.id + '">' + categoria.descricao + '</option>';
-                 });
- 
-                 $('.categoriaSelect').html(options);
-             }
-         });
-     });
 
-// TOGGLE SWITCH
-$("body").on('change', '.status-produto', function () {
- 
-    var id = $(this).data('id');
-    var status = $(this).is(":checked") ? 'ativo' : 'inativo';
+// CADASTRAR
+    $("body").on('submit','#cadastrar-produtos', function(e) {
+
+    e.preventDefault();
+    var formData = $(this).serialize();
+    console.log(formData);
+
+    $("#msg-error").addClass('d-none');
 
     $.ajax({
-        url: '{{ route("admin.produtos.status") }}',
-        type: 'POST',
-        data: {
-            _token: '{{ csrf_token() }}',
-            id: id,
-            status: status,
-        },
-        success: function (response) {
-            $("#lista-Produtos").html(response);
-        }
-    });
-});
+        url: '{{route("admin.produtos.store")}}',
+        type: "POST",
+        data: formData,
+        
+        success: function(response) {
+        console.log(response);
 
+            $('#descricao').val('');
+            $('#grupoSelect').val('');
+            $('#categoriaSelect').val('');
+            $('#valor').val('');
+
+            $('#lista-Produtos').html(response);
+
+            $('#produtos_table').DataTable({
+                "lengthMenu": [5, 10, 20],
+                "pageLength": 5,
+                "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json"}
+            });
+        },
+
+        error: function(response) {
+        
+        $("#msg-error ul").html('');
+        var errors = $.parseJSON(response.responseText);
+            $.each(errors.errors, function (k, v) {
+                
+                $("#msg-error ul").append('<li class="text-white">'+v+'</li>')
+            });
+            $("#msg-error").removeClass('d-none')     
+        },      
+    });
+
+    });
 
 // EDITAR
     $("body").on('click','.editar-produtos',function() {
@@ -178,8 +192,14 @@ $("body").on('click', '.deletar-produtos', function (event) {
                 type: "GET",
                 success: function (response) {
 
-                    window.location.reload();
+                    $("#lista-Produtos").html(response);
 
+                    $('#produtos_table').DataTable({
+                        "lengthMenu": [5, 10, 20],
+                        "pageLength": 5,
+                        "language": {
+                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json"}
+                    });
                 },
             });
         }

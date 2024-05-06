@@ -20,7 +20,7 @@
             </div>
             <div class="form-group col-sm-3">
                 <span class="titulo"> Valor: *</span>          
-                <input type="text" name="valor" value="{{$cupom->valor}}"  class="form-control maskMoney" required>  
+                <input type="text" name="valor" value="{{$cupom->valor}}"  class="form-control moneyMask" required>  
             </div>
             <div class="form-group col-sm-3">
                 <span class="titulo"> Quantidade: *</span>          
@@ -68,7 +68,7 @@
             </div>
             <div class="form-group col-sm-3">
                 <span class="titulo"> Valor: *</span>          
-                <input type="text" name="valor"   class="form-control maskMoney" required>  
+                <input type="text" name="valor"   class="form-control moneyMask" required>  
             </div>
             <div class="form-group col-sm-3">
                 <span class="titulo"> Quantidade: *</span>          

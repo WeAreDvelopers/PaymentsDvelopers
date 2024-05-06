@@ -29,7 +29,8 @@
                         
 
                         <td>
-                        <div class="form-check form-switch">
+                                <div class="form-check form-switch">
+
                                         <input class="form-check-input status-categoria"
                                          type="checkbox" name="status" role="switch" 
                                           value="ativo"
@@ -37,8 +38,7 @@
                                           @if($prod->status == 'ativo')
                                             checked
                                             @endif
-                                            >
-                                        <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
+                                            ><label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
                                     </div>
                         </td>
              

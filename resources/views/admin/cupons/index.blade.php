@@ -95,8 +95,10 @@ $("body").on('change', '.status-categoria', function () {
         success: function(response) {
         console.log(response);
 
-            $('#descricao').val('');
-            $('#grupoSelect').val('');
+      //      $('#descricao').val('');
+        //    $('#grupoSelect').val('');
+        $("#cadastrar-cupons")[0].reset();
+         
             $('#lista-Categorias').html(response);
 
             $('#categorias_table').DataTable({

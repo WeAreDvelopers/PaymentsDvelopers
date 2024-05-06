@@ -47,6 +47,7 @@
                                     <span class="titulo"> Máximo de Parcelas: *</span>
                                     <input type="number" name="max_parcelas" value="{{$produto->max_parcelas}}" class="form-control " required>
                                 </div>
+
                                 <div class="form-group col-sm-3 me-5">
                                     <span class="titulo"> Status: </span>
                                     <div class="form-check form-switch">
@@ -54,6 +55,10 @@
                                         <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
                                     </div>
                                 </div>
+                                <div class="form-group col-sm-3 me-5">
+                                    <input type="hidden" name="id" value="{{$produto->id}}">
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -89,6 +94,45 @@
         </div>   
     </div>
     @endif
+
+
+    <div class="card mt-3">
+        <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-sm-5">
+                <h4>Popup</h4>
+            </div>
+            <div class="form-group col-sm-3 me-5">
+                                    
+                    <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="status_popup" role="switch" value="ativo" id="flexSwitchCheckChecked_popup" checked>
+                            <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
+                    </div>
+             </div>
+
+        </div>
+          
+            <div class="row">
+
+                <div class="col-5 text-center">
+                        <label for="exampleInputFile" class="control-label">
+                                Imagem Produto <small>(500 x 500px)</small>
+                        </label>
+                        <x-upload-file target="logo" collum="id_popup" :media="$produto->popup" />
+
+                </div>
+
+                <div class="col-7">
+    <!-- CONTEUDO SUMMER NOTE -->
+                        <textarea id="summernote" name="informativo" class="form-control"  placeholder="Digite o conteudo do assunto" required >{{$produto->popup->informativo ?? ''}}</textarea>
+                 </div>
+            </div>
+
+        </div>
+    </div>
+
     <div class="card mt-3">
         <div class="card-body text-end">
 
@@ -102,6 +146,14 @@
 
 @section('scripts')
 <script>
+
+$('#summernote').summernote({
+       
+       tabsize: 1,
+       height: 120,
+       
+     });
+
     $("body").on('submit', '#cadastrar-produtos', function(e) {
 
         e.preventDefault();
@@ -121,8 +173,7 @@
                     text: "Cadastro realizado com sucesso!.",
                     icon: "success",
                 });
-               
-              
+                 
             },
 
             error: function(response) {

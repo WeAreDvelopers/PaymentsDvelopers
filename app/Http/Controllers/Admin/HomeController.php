@@ -13,6 +13,7 @@ use App\Models\Produtos;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Auth;
+
 class HomeController extends Controller
 {
     /**
@@ -55,7 +56,7 @@ class HomeController extends Controller
         }
         
         $cliente_total = $totalClientes;
-        $cupons_total = Cupons::count();
+        $cupons_total = Cupons::sum('qtd');
         $pedidos_total = Pedidos::count();
         $faturamento = Pedidos::sum('valor_final');
         

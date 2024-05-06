@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\GatewaysController;
 use App\Http\Controllers\Admin\GrupoController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\IntegracoesController;
+use App\Http\Controllers\Admin\LeadsController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\ProdutosController;
 use App\Http\Controllers\Admin\PedidosController;
@@ -144,6 +145,20 @@ Route::name('admin.')->prefix('admin')->middleware(['auth'])->group(function () 
         Route::get('/configuracoes/{slug}', 'configuracoes')->name('configuracoes');
         Route::post('/store', 'store')->name('store');
     });
+
+// Leads
+    Route::name('leads.')->prefix('leads')->controller(LeadsController::class)->group(function () {
+
+        Route::get('/', 'index')->name('index');
+        Route::get('/new', 'new')->name('new');
+        Route::post('/store', 'store')->name('store');
+        Route::get('/edit/{id}', 'edit')->name('edit');
+        Route::post('/update/{id}', 'update')->name('update');
+        Route::get('/delete/{id}', 'delete')->name('delete');
+
+        Route::get('/preview/{id}', 'preview')->name('preview');
+
+   });
 
 // Pedidos
     Route::name('pedidos.')->prefix('pedidos')->controller(PedidosController::class)->group(function () {
