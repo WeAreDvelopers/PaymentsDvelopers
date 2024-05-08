@@ -112,9 +112,6 @@ public function new(Request $request){
 
     ]);
 
-       
-      
-
     return response()->json(['status'=>'ok'],200);
     }
 
@@ -131,30 +128,15 @@ public function new(Request $request){
     }
 
 // SELECT STATUS
-    public function status(Request $request){
+public function status(Request $request){
 
-        $data = $request->all();
+    $data = $request->all();
+    
+    Produtos::where('id',$data['id'])->update(['status'=> $data['status']]);
 
-        Produtos::where('id',$data['id'])->update(['status'=> $data['status']]);
+    return response()->json([ 'Status' => 'Alterado com sucesso']);
+}
 
-        if(Auth::User()->role == "master"){
-
-            $produtos = Produtos::all();
-        }
-
-        if(Auth::User()->role == "admin"){
-
-            $empresa_id = Auth::User()->id_empresa;
-            $grupos = Grupos::all();
-
-            $categorias = Categorias::all();
-            
-            $produtos = Produtos::where('id_empresa', $empresa_id)->get();
-        }
-
-        return view('admin.produtos._list-produtos', compact('produtos','categorias', 'grupos'));
-        }
-        
 // SELECT GRUPO
     public function selectGrupo ($grupoId){
 

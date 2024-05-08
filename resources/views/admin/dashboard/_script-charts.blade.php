@@ -76,7 +76,7 @@
 
       function drawChart() {
 
-        var jsonData = <?php echo json_encode($produtosBar); ?>;
+        var jsonData = <?php echo json_encode($Cupons); ?>;
 
         var dataArray = [['Produto', 'Quantidade']];
             for (var i = 0; i < jsonData.labels.length; i++) {
@@ -86,7 +86,7 @@
         var data = google.visualization.arrayToDataTable (dataArray);
 
         var options = {
-          title: 'Produtos',
+          title: 'Cupons',
           titleTextStyle: { fontSize: 14, color: 'gray' },
           is3D: true,
         };

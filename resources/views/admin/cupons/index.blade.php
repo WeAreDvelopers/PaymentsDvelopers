@@ -59,7 +59,7 @@
     });
 
 // TOGGLE SWITCH
-$("body").on('change', '.status-categoria', function () {
+$("body").on('change', '.status-cupom', function () {
     
     var id = $(this).data('id');
     var status = $(this).is(":checked") ? 'ativo' : 'inativo';
@@ -73,7 +73,7 @@ $("body").on('change', '.status-categoria', function () {
             status: status,
         },
         success: function (response) {
-           
+           console.log(response);
         }
     });
 });

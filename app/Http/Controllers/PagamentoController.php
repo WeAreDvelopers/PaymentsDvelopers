@@ -23,6 +23,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class PagamentoController extends Controller
@@ -39,16 +40,14 @@ class PagamentoController extends Controller
     
     public function __construct(){
         
-
-
             $this->urlBase = env('BASE_ASAAS'); 
            // $this->token = env('TOKEN_ASAAS'); 
     }
 
 
     public function index(Request $request,$token = null){
-      
-        
+
+       
        $produto = Produtos::where('token',$token)->first();
        $sessionID = session()->getId();
        $carrinho = Carrinho::updateOrCreate([
@@ -122,6 +121,7 @@ class PagamentoController extends Controller
             ],[
             'nome'          => $data['nome'],
             'telefone'      => $data['celular'],
+            'cpf'      => $data['cpf']
         ]);
 
         $this->atualizaCarrinho([
@@ -143,7 +143,7 @@ class PagamentoController extends Controller
         $produto = Produtos::where('token',$token)->first();
        
         $empresa = $produto->empresa;
-        // $companyInfo = $this->createBaseCompany($dados);
+       
         $customerInfo = $this->createBaseCustomer($dados,$empresa);
 
         if($customerInfo['status'] == 'error'){
@@ -154,12 +154,11 @@ class PagamentoController extends Controller
         }
         $customerInfo = $customerInfo['data'];
       
-        //$payment = $this->criarAssinatura($customerInfo, $dados);
         $carrinho = Carrinho::where('session_id',session()->getId())->first();
         $pedido = $this->criaPedido($customerInfo, $carrinho);
 //dd($pedido); 10 ex
 
-// Arrumar este codigo CUPOM
+
         $idCupom = $pedido['pedido']->id_cupom;
         $cupom = Cupons::where('id', $idCupom)->first();
 
@@ -167,9 +166,6 @@ class PagamentoController extends Controller
             $cupom->qtd -= 1;
             $cupom->save();
         }
-
-
-
     
        $customerInfo['itens_pedidos'] =  $pedido['pedido']->itens;
      
@@ -214,9 +210,11 @@ class PagamentoController extends Controller
         $costumer = User::where('email', $dados['email'])->first();
         $senha = Str::random(8);
         $tokenAsaas = null;
+
         if($costumer){
             $tokenAsaas = $costumer->tokenAssas($empresa->id)->first();
         }else{
+
             $costumer = User::create([
                 'name'  => $dados['nome'],
                 'email' =>  $dados['email'],
@@ -225,7 +223,7 @@ class PagamentoController extends Controller
             ]);
             DadosClientes::create([
                 'id_user'=>$costumer->id,
-                'cpf' => @$dados['cpf'],
+                'cpf' => $dados['cpf'],
                 'telefone'=>$dados['celular'],
                
             ]);
@@ -464,8 +462,10 @@ class PagamentoController extends Controller
 
         $pedido = Pedidos::where('numero_pedido',$pedido)->first();
         
-        // $servico = new APIManager();
-        // $servico->start($pedido);
+        Session::forget('produto');
+        Session::forget('carrinho');
+        $request->session()->regenerate();
+
         return view('sucesso',compact('pedido'));
     }
 

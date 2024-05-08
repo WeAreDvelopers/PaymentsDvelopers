@@ -22,4 +22,13 @@ class LeadsController extends Controller
         return view('admin.leads.index', compact('leads'));
         
     }
+
+// DELETAR
+    public function delete(Request $request,$id)   {
+
+        $lead = Leads::find($id);
+        $lead-> delete();
+
+        return response()->json(['status'=>'ok'],200);
+    }
 }

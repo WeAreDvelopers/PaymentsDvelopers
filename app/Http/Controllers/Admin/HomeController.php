@@ -56,16 +56,24 @@ class HomeController extends Controller
         }
         
         $cliente_total = $totalClientes;
-        $cupons_total = Cupons::sum('qtd');
+        $cupons_disponiveis = Cupons::sum('qtd');
+        $cupons_utilizados = Pedidos::whereNotNull('id_cupom')->count();
+        $cupons_total =  $cupons_disponiveis + $cupons_utilizados;
         $pedidos_total = Pedidos::count();
         $faturamento = Pedidos::sum('valor_final');
+
+        $Cupons = [       
+            
+            'labels' => ['Disponiveis', 'Utilizados'],
+            'qtd' => [(int)$cupons_disponiveis, (int) $cupons_utilizados ],
+        ];
         
-        $produtos = [       
+      /*  $produtos = [       
             
             'labels' => ['X-salada', 'Refrigerante', 'Agua', 'Pastel', 'Doces'],
             'qtd' => [25, 30, 15, 10, 20],
         ];
-
+*/
         $produtosBar = [
 
             'labels' => ['X-salada', 'Refrigerante', 'Agua', 'Pastel', 'Doces'],
@@ -86,7 +94,7 @@ class HomeController extends Controller
     
         return view('admin.dashboard.index', compact('clientes','cliente_total','pedidos_total','faturamento',
                     
-                     'produtos', 'produtosBar', 'vendas', 'vendas1', 'cupons_total'));
+                     'Cupons', 'produtosBar', 'vendas', 'vendas1', 'cupons_total'));
         
     }
 

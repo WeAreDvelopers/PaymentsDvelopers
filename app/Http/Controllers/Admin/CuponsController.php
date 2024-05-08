@@ -82,8 +82,10 @@ public function status(Request $request){
     
     Cupons::where('id',$data['id'])->update(['status'=> $data['status']]);
 
-  
+    return response()->json([
+        'Status' => 'Alterado com sucesso.'
+    ]);
     
-    return view('admin.cupons._list-cupons', compact('cupons'));
+    //return view('admin.cupons._list-cupons', compact('cupons'));
 }
 }

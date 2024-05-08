@@ -82,7 +82,7 @@ $("body").on('change', '.status-produto', function () {
             status: status,
         },
         success: function (response) {
-            $("#lista-Produtos").html(response);
+           console.log(response);
         }
     });
 });

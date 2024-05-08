@@ -31,6 +31,9 @@ class Pedidos extends Model
     public function cliente(){
         return  $this->hasOne(User::class,'id','id_user');
     }
+    public function lead(){
+        return  $this->hasOne(Leads::class,'id','id_user');
+    }
 
     public function cupom(){
         return  $this->hasOne(Cupons::class,'id','id_cupom');
