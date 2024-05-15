@@ -109,7 +109,7 @@
                         <label for="exampleInputFile" class="control-label">
                         Imagem Popup <small>(500 x 500px)</small>
                     </label>
-                    <x-upload-file target="logo" collum="id_media_popup" />
+                    <x-upload-file target="logo" collum="id_popup" />
                 </div>
 
                 <div class="col-7">

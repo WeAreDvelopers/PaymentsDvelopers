@@ -3,7 +3,7 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-12">
-        <form id="cadastrar-produtos" action="{{route('admin.produtos.update',['id'=>$produto->id])}}">
+        <form id="atualizar-produtos" action="{{route('admin.produtos.update',['id'=>$produto->id])}}">
             @csrf
             <div class="card">
                 <div class="card-body">
@@ -154,40 +154,49 @@ $('#summernote').summernote({
        
      });
 
-    $("body").on('submit', '#cadastrar-produtos', function(e) {
+// ATUALIZAR
+    $("body").on('submit','#atualizar-produtos', function(e) {
 
-        e.preventDefault();
-        var formData = $(this).serialize();
-        console.log(formData);
+    e.preventDefault();
+    var formData = $(this).serialize();
+    console.log(formData);
 
-        $("#msg-error").addClass('d-none');
+    $("#msg-error").addClass('d-none');
 
-        $.ajax({
-            url: $(this).attr('action'),
-            type: "POST",
-            data: formData,
-            success: function(response) {
-                console.log(response);
-                swal({
+    $.ajax({
+
+        url: $(this).attr('action'),  
+        type: "POST",                
+        data: formData,
+        
+        success: function(response) {
+            
+            console.log(response);
+            swal({
                     title: "Parábens",
-                    text: "Cadastro realizado com sucesso!.",
+                    text: "Atualizado com sucesso!.",
                     icon: "success",
+                }).then(function() {
+
+                   // location.reload();
+                    window.location.href = '{{route("admin.produtos.index")}}';
                 });
-                 
-            },
+          
+        }, 
 
-            error: function(response) {
-
-                $("#msg-error ul").html('');
-                var errors = $.parseJSON(response.responseText);
-                $.each(errors.errors, function(k, v) {
-
-                    $("#msg-error ul").append('<li class="text-white">' + v + '</li>')
+        error: function(response) {
+            
+            $("#msg-error ul").html('');
+            var errors = $.parseJSON(response.responseText);
+                $.each(errors.errors, function (k, v) {
+                    
+                    $("#msg-error ul").append('<li class="text-white">'+v+'</li>')
                 });
-                $("#msg-error").removeClass('d-none')
-            },
-        });
-
+                $("#msg-error").removeClass('d-none')     
+        },      
     });
+    });
+
+   
 </script>
 @endsection

@@ -96,8 +96,6 @@
  
 <script>
 
-
-   
    $("body").on('change' , '.form-switch .form-check-input',function(){
    
       if($(this).is(':checked')){

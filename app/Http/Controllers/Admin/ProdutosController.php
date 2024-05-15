@@ -60,7 +60,7 @@ public function new(Request $request){
 
             'id_produto'=> $produto->id,
             'status' =>  $status_popup,
-            'id_popup'=> $data['id_media_popup'],
+            'id_popup'=> $data['id_popup'],
             'informativo' => $data['informativo']
 
         ]);
@@ -107,7 +107,7 @@ public function new(Request $request){
 
         
         'status' => $status_popup,
-        'id_popup'=> $data['id_media_popup'],
+        'id_popup'=> $data['id_popup'],
         'informativo' => $data['informativo']
 
     ]);
@@ -137,11 +137,5 @@ public function status(Request $request){
     return response()->json([ 'Status' => 'Alterado com sucesso']);
 }
 
-// SELECT GRUPO
-    public function selectGrupo ($grupoId){
 
-        $categorias = Categorias::where('id_grupo', $grupoId)->get();
-
-        return response()->json($categorias);
-    }
 }
