@@ -18,9 +18,10 @@ class EadSimplesService{
         $this->integracao = $integracao;
        
         $this->apiUrl = $integracao->parametros->apiUrl();
+        $this->credenciais();
     }
     public function start($dados){
-        $this->credenciais();
+       
         $idAluno = $this->cadastrarAluno($dados);
         $this->matricularAluno($idAluno,$dados);
     }
@@ -50,6 +51,7 @@ class EadSimplesService{
     }
     public function cadastrarAluno($pedido)
     {
+        
         $search = Http::withHeaders([
             'Authorization' => 'Bearer '.  $this->apiKey,
         ])->get($this->apiUrl . '/v1/cadastro/search/'.'DV_'.$pedido->cliente->id)->json();
@@ -92,11 +94,15 @@ class EadSimplesService{
 
     public function listarCursos()
     {
-        $response = Http::get($this->apiUrl . '/cursos', [
-            'api_key' => $this->apiKey,
-        ]);
+      
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer '.  $this->apiKey,
+            ])->get($this->apiUrl . '/v1/curso/getall')->json();
 
-        return $response->json();
+     
+            
+
+        return $response;
     }
     public function cadastrarProduto($dados){
         $integracao  = $this->integracao;

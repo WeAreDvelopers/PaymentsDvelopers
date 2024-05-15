@@ -25,7 +25,7 @@ class Empresas extends Model
         'email_contato',
         'telefone_contato',
         'id_logo',
-        'statu',
+        'status',
     ];
 
     public function media(){
@@ -33,7 +33,6 @@ class Empresas extends Model
     }
 
     public function checkIntegracao($name){
-       
         $check = Integracoes::where('nome',$name)->first();
         if(!$check){
             $check =  Integracoes::create([

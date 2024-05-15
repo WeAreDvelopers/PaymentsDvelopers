@@ -1,19 +1,11 @@
 {
-  "resources/img/img-fundo-mobile.png": {
-    "file": "assets/img-fundo-mobile-b09e47d3.png",
-    "src": "resources/img/img-fundo-mobile.png"
-  },
-  "resources/img/img-fundo.jpg": {
-    "file": "assets/img-fundo-d6ed6058.jpg",
-    "src": "resources/img/img-fundo.jpg"
-  },
   "resources/js/app.js": {
     "file": "assets/app-a83ed21d.js",
     "isEntry": true,
     "src": "resources/js/app.js"
   },
   "resources/scss/app.scss": {
-    "file": "assets/app-faf00615.css",
+    "file": "assets/app-c59b5838.css",
     "isEntry": true,
     "src": "resources/scss/app.scss"
   }

@@ -1,5 +1,6 @@
 @extends('layouts.pagamento')
 
+@section('title',$produto->nome)
 @section('pre-assets')
 
 @endsection

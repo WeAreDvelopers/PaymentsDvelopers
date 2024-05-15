@@ -78,11 +78,12 @@
             </div>
             <div class="col">
                     <p>Selecione o produto relacionado em sua conta do EAD Simples</p>
+                   
                     <select name="ead_simples_curso" id="" class="form-select">
                         <option value="">Selecione</option>
-                        <option value="PROD1" @if($produto->produtosEadSimples->id_produto_ead == "PROD1") selected @endif >Produto 1</option>
-                        <option value="PROD2" @if($produto->produtosEadSimples->id_produto_ead == "PROD2") selected @endif >Produto 2</option>
-                        <option value="PROD3" @if($produto->produtosEadSimples->id_produto_ead == "PROD3") selected @endif >Produto 3</option>
+                        @foreach(eadSimples()->listarCursos() as $k => $v)
+                        <option value="{{$v['Id']}}" @if($produto->produtosEadSimples->id_produto_ead == $v['Id']) selected @endif >{{$v['Nome']}} ({{$v['Status']}}) </option>
+                        @endforeach
                     </select>
             </div>
             </div>     

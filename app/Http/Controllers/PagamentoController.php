@@ -161,7 +161,7 @@ class PagamentoController extends Controller
         if($this->bonus){
             $this->sendMail($customerInfo,'compra');
         }
-dd('a');
+
         return response()->json([
             'status'    => 'ok',
             'message'   =>  'Payment created successfully!',

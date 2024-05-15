@@ -2,6 +2,7 @@
 
 use App\Models\Configuracoes;
 use App\Models\Igreja;
+use App\Services\EadSimplesService;
 use Illuminate\Support\Facades\Auth;
 
 function empresa()
@@ -31,5 +32,16 @@ if (!function_exists('saveMoney')) {
         $money = str_replace(".", "", $value);
         $money = str_replace(",", ".", $money);
         return $money;
+    }
+}
+if (!function_exists('eadSimples')) {
+    function eadSimples(){
+        $eadsimples = empresa()->checkIntegracao('eadsimples');
+      
+
+        $service = new EadSimplesService($eadsimples);
+       
+         return  $service;
+      
     }
 }

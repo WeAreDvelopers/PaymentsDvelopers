@@ -76,9 +76,13 @@
             </div>
             <div class="col">
                     <p>Selecione o produto relacionado em sua conta do EAD Simples</p>
+                   
                     <select name="ead_simples_curso" id="" class="form-select">
                         <option value="">Selecione</option>
-                        <option value="PROD1">Produto 1</option>
+                        
+                        @foreach(eadSimples()->listaCutsos as $k => $curso)
+                        <option value="{{$curso->ID}}">{{$curso->name}}</option>
+                        @endforeach
                         <option value="PROD2">Produto 2</option>
                         <option value="PROD3">Produto 3</option>
                     </select>
