@@ -1,30 +1,4 @@
 
-<!-- BAR SIMPLES -->
-<script>
-        var ctx = document.getElementById('barChart').getContext('2d');
-
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: @json($clientes['labels']),
-                    datasets: [{
-                        label: 'Clientes',
-                        data: @json($clientes['qtd']),
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-        });
-</script>
-
 
 <!-- LINHAS -->
 <script>
@@ -68,15 +42,14 @@
 
 
 
-
-<!-- PIE 3D GOOGLE -->
+<!-- DONUT 3D GOOGLE -->
 <script>
       google.charts.load("current", {packages:["corechart"]});
       google.charts.setOnLoadCallback(drawChart);
 
       function drawChart() {
 
-        var jsonData = <?php echo json_encode($Cupons); ?>;
+        var jsonData = <?php echo json_encode($ProdutosDonut); ?>;
 
         var dataArray = [['Produto', 'Quantidade']];
             for (var i = 0; i < jsonData.labels.length; i++) {
@@ -86,32 +59,8 @@
         var data = google.visualization.arrayToDataTable (dataArray);
 
         var options = {
-          title: 'Cupons',
-          titleTextStyle: { fontSize: 14, color: 'gray' },
-          is3D: true,
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-        chart.draw(data, options);
-      }
-</script>
-
-<!-- DONUT 3D GOOGLE -->
-<script>
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawChart);
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Work',     11],
-          ['Eat',      2],
-          ['Commute',  2],
-          ['Watch TV', 2],
-          ['Sleep',    7]
-        ]);
-
-        var options = {
-          title: 'My Daily Activities',
+          title: 'Venda por Produto',
+          titleTextStyle: { fontSize: 18, color: 'black' },
           pieHole: 0.4,
         };
 
@@ -120,110 +69,53 @@
       }
 </script>
 
+<!-- LINHAS - Google multiple -->
+<script>
+  google.charts.load('current', {'packages':['corechart']});
+  google.charts.setOnLoadCallback(drawChart);
 
+  function drawChart() {
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Mês');
 
-  <!-- BAR HORIZONTAL GOOGLE -->
-  <script>
-google.charts.load('current', {'packages':['bar']});
-google.charts.setOnLoadCallback(drawChart);
+    @foreach ($Produtos['datasets'] as $dataset)
+      data.addColumn('number', '{{ $dataset['label'] }}');
+    @endforeach
 
-function drawChart() {
-  var data = google.visualization.arrayToDataTable([
-    ['Year', 'Produtos'],
-    ['X-Salada', 38],
-    ['Refrigerante', 60],
-    ['Pastel', 104],
-    ['Agua', 257]
-  ]);
+    var rows = [];
+    @foreach ($Produtos['labels'] as $monthIndex => $month)
+      var row = ['{{ $month }}'];
+      @foreach ($Produtos['datasets'] as $dataset)
+        row.push({{ $dataset['data'][$monthIndex] }});
+      @endforeach
+      rows.push(row);
+    @endforeach
 
-  var options = {
-    chart: {
-      title: 'Pedidos',
-      subtitle: 'Evolução Mensal',
-    },
-    bars: 'horizontal',
-    hAxis: {
-      ticks: [0, 50, 100, 150, 200, 250, 300], // Define os valores da escala horizontal
-      title: 'Quantidade' // Título do eixo horizontal
-    },
-    vAxis: {
-      ticks: [0, 50, 100, 150, 200, 250, 300], // Define os valores da escala vertical
-      title: 'Quantidade' // Título do eixo vertical
-    }
-  };
+    data.addRows(rows);
 
-  var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+    var options = {
+      title: 'Evolução',
+      titleTextStyle: { fontSize: 20, color: 'black' },
+      curveType: 'none',
+      legend: { position: 'bottom' },
+      hAxis: {
+        title: '',
+        slantedText: true,
+        slantedTextAngle: 45,
+        gridlines: { color: '#ccc', count: {{ count($Produtos['labels']) }} }
+      },
+      vAxis: {
+        title: 'Vendas',
+        gridlines: { color: '#ccc', count: 10 }
+      },
+      series: {
+        @foreach ($Produtos['datasets'] as $index => $dataset)
+          {{ $index }}: { color: '{{ $dataset['color'] }}' },
+        @endforeach
+      }
+    };
 
-  chart.draw(data, google.charts.Bar.convertOptions(options));
-}
+    var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+    chart.draw(data, options);
+  }
 </script>
-
-
-
-<!-- MANY BAR GOOGLE VRTICAL -->
-    <script>
-          google.charts.load('current', {'packages':['corechart']});
-          google.charts.setOnLoadCallback(drawVisualization);
-
-          function drawVisualization() {
-            // Some raw data (not necessarily accurate)
-            var data = google.visualization.arrayToDataTable([
-              ['Month', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
-              ['2004/05',  165,      938,         522,             998,           450,      614.6],
-              ['2005/06',  135,      1120,        599,             1268,          288,      682],
-              ['2006/07',  157,      1167,        587,             807,           397,      623],
-              ['2007/08',  139,      1110,        615,             968,           215,      609.4],
-              ['2008/09',  136,      691,         629,             1026,          366,      569.6]
-            ]);
-
-            var options = {
-              title : 'Aqui é um exemplo de multiple Bar vertical',
-              vAxis: {title: 'Cups'},
-              hAxis: {title: 'Month'},
-              seriesType: 'bars',
-              series: {5: {type: 'line'}}
-            };
-
-            var chart = new google.visualization.ComboChart(document.getElementById('bar_Many'));
-            chart.draw(data, options);
-          }
-    </script>
-
-
-
-
-<script> // Teste BAR
-google.charts.load('current', {'packages':['bar']});
-google.charts.setOnLoadCallback(drawChart);
-
-function drawChart() {
-  var data = google.visualization.arrayToDataTable([
-    ['Produtos', 'X-Salada', 'Refrigerante', 'Pastel', 'Agua'],
-    ['', 38, 60, 104, 257]
-  ]);
-
-  var options = {
-    chart: {
-      title: 'Pedidos',
-      subtitle: 'Evolução Mensal',
-    },
-    bars: 'horizontal',
-    vAxis: {
-      ticks: [0, 50, 100, 150, 200, 250, 300], // Define os valores da escala vertical
-      title: 'Quantidade' // Título do eixo vertical
-    },
-    hAxis: {
-      title: 'Produtos' // Título do eixo horizontal
-    },
-    height: 400,
-    width: 600,
-    legend: { position: 'top', maxLines: 3 },
-    bar: { groupWidth: '75%' }
-  };
-
-  var chart = new google.charts.Bar(document.getElementById('teste_bar'));
-
-  chart.draw(data, google.charts.Bar.convertOptions(options));
-}
-</script>
-

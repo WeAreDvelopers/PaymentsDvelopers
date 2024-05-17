@@ -16,9 +16,9 @@ class Popup extends Model
         'status'
     ];
 
-    public function media(){
+ public function media(){
         return $this->hasOne(Media::class,'id','id_popup');
-    }
+  }
 }
 
 
