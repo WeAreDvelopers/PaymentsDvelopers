@@ -43,7 +43,8 @@
     <p>Obrigado por fazer o seu pedido conosco. <br>
     Abaixo estão os detalhes do seu pedido:</p>
     <h2>Número do Pedido: {{$pedido['numero_pedido']}}</h2>
-    <h2>Data do Pedido: 09 de abril de 2024</h2>
+    <h2>Data do Pedido: {{ \Carbon\Carbon::createFromFormat('Y-m-d\TH:i:s.u\Z', $pedido['created_at'])->format('d/m/Y') }}</h2>
+
     <table>
         <thead>
             <tr>
@@ -53,11 +54,13 @@
             </tr>
         </thead>
         <tbody>
-          @foreach($pedido['itens'] as $k => $v)
+
+     
+          @foreach($itens_pedidos as $k => $item)
             <tr>
-                <td>{{$v['produto']['nome']}}</td>
+                <td>{{$item->produto->nome}}</td>
                 <td>1</td>
-                <td>R$ {{getMoney($v['valor_final'])}}</td>
+                <td>R$ {{getMoney($item->valor_final)}}</td>
             </tr>
           @endforeach
            

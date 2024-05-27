@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_empresa');
             $table->foreign('id_empresa')->references('id')->on('empresas')->onDelete('cascade');
             $table->string('nome');
+            $table->string('cpf');
             $table->string('email');
             $table->string('telefone');
             $table->timestamps();

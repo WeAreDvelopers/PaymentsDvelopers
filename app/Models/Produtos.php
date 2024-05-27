@@ -32,9 +32,14 @@ class Produtos extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function popup(){
+        return $this->hasOne(Popup::class,'id_produto','id');
+    }
     public function media(){
         return $this->hasOne(Media::class,'id','id_media');
     }
+
     public function empresa(){
         return $this->hasOne(Empresas::class,'id','id_empresa');
     }

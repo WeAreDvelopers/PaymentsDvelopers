@@ -59,7 +59,7 @@
     });
 
 // TOGGLE SWITCH
-$("body").on('change', '.status-categoria', function () {
+$("body").on('change', '.status-cupom', function () {
     
     var id = $(this).data('id');
     var status = $(this).is(":checked") ? 'ativo' : 'inativo';
@@ -73,7 +73,7 @@ $("body").on('change', '.status-categoria', function () {
             status: status,
         },
         success: function (response) {
-           
+           console.log(response);
         }
     });
 });
@@ -95,8 +95,10 @@ $("body").on('change', '.status-categoria', function () {
         success: function(response) {
         console.log(response);
 
-            $('#descricao').val('');
-            $('#grupoSelect').val('');
+      //      $('#descricao').val('');
+        //    $('#grupoSelect').val('');
+        $("#cadastrar-cupons")[0].reset();
+         
             $('#lista-Categorias').html(response);
 
             $('#categorias_table').DataTable({

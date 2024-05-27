@@ -34,7 +34,6 @@
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/40b7169917.js" crossorigin="anonymous"></script>
   
-
   <!-- Estilos CSS / TOGGLE-->
   <link rel="stylesheet" href="{{asset('css/toggle_Switch.css')}}">
   <link rel="stylesheet" href="{{asset('css/estilos.css')}}">
@@ -43,7 +42,10 @@
 
   <link href="{{asset('assets/css/nucleo-svg.css')}}" rel="stylesheet" />
 
-
+<!-- include SUMMER NOTE css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<!-- CSS do Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <link href="{{asset('build/assets/app-c59b5838.css')}}" rel="stylesheet">
 
@@ -86,6 +88,10 @@
   </main>
 
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+  <!-- JavaScript do Bootstrap 5 (opcional, se você precisar de funcionalidades JS do Bootstrap) -->
+
+  <!-- SUmmer Note -->
+  <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
   <!-- Account MOney -->
   <script src="{{asset('assets/js/accounting.min.js')}}"></script>
   <!-- DataTables-->
@@ -109,13 +115,15 @@
    
    $("body").on('change' , '.form-switch .form-check-input',function(){
    
-   if($(this).is(':checked')){
-     $(this).siblings('label').html('Ativo')
-     $(this).val('ativo');
-   }else{
-     $(this).siblings('label').html('Inativo')
-   }
- })
+      if($(this).is(':checked')){
+        $(this).siblings('label').html('Ativo')
+        $(this).val('ativo');
+      }else{
+        $(this).siblings('label').html('Inativo')
+        
+      }
+   })
+
 
     function getMoney(numero) {
          return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(numero).replace('R$', '');
@@ -238,7 +246,76 @@ $("body").on('click','.tooglegeCollapse',function(e){
     }
 
   
+    // CPF VALIDADOR
+    $('#cpf').on('change', function() {
 
+    var cpfInput = this.value;
+
+    if (validaCPF(cpfInput)) { 
+      
+    return true
+
+    } else {
+      
+        swal({
+              title: "CPF inválido!",
+              icon: "error",
+              }).then(function() {
+        
+                $('#cpf').val('');
+              });
+    }
+    });
+
+    function validaCPF(cpf) {
+    var Soma = 0
+    var Resto
+
+    var strCPF = String(cpf).replace(/[^\d]/g, '')
+
+    if (strCPF.length !== 11)
+      return false
+
+    if ([
+      '00000000000',
+      '11111111111',
+      '22222222222',
+      '33333333333',
+      '44444444444',
+      '55555555555',
+      '66666666666',
+      '77777777777',
+      '88888888888',
+      '99999999999',
+      ].indexOf(strCPF) !== -1)
+      return false
+
+    for (i=1; i<=9; i++)
+      Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (11 - i);
+
+    Resto = (Soma * 10) % 11
+
+    if ((Resto == 10) || (Resto == 11)) 
+      Resto = 0
+
+    if (Resto != parseInt(strCPF.substring(9, 10)) )
+      return false
+
+    Soma = 0
+
+    for (i = 1; i <= 10; i++)
+      Soma = Soma + parseInt(strCPF.substring(i-1, i)) * (12 - i)
+
+    Resto = (Soma * 10) % 11
+
+    if ((Resto == 10) || (Resto == 11)) 
+      Resto = 0
+
+    if (Resto != parseInt(strCPF.substring(10, 11) ) )
+      return false
+
+    return true
+    }
 
 </script>
 

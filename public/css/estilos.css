@@ -1,0 +1,37 @@
+@media print {
+    #projetos_table tbody {
+        margin-left: 30px;
+        margin-right: 30px;
+    }
+}
+
+.main-sidebar {
+    position: fixed;
+    height: 100%; /* You can adjust the height accordingly */
+    top: 0;
+    left: 0;
+}
+
+.arial12-font {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+}
+
+.arial8-font {
+    font-family: 'Arial', sans-serif;
+    font-size: 8px;
+}
+
+.arial14-font {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+}
+
+input {
+    font-family: Arial, sans-serif;
+    font-size: 8px;
+}
+
+.text-bold {
+    font-weight: bold;
+}

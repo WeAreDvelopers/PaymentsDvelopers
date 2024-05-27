@@ -36,15 +36,15 @@
                     <div class="col-sm-6">
                             <div>
                                 <span class="text-sm text-grey-m2 align-middle">Cliente:</span>
-                                <span class="text-600 text-110 text-blue align-middle">{{ $pedido->cliente->name}}</span>
+                                <span class="text-600 text-110 text-blue align-middle">{{ $pedido->cliente->name ?? ''}}</span>
                             </div>
 
                             <div class="text-grey-m2">
                                 <div class="ms-4 my-3">
-                                    {{ $pedido->cliente->cpf ?? ''}}
+                                    {{ $pedido->cliente->dados->cpf ?? ''}}
                                 </div>
                               
-                                <div class="my-1"><i class="fa fa-phone fa-flip-horizontal text-secondary"></i> <b class="text-600">{{ $pedido->cliente->dados->telefone }}</b></div>
+                                <div class="my-1"><i class="fa fa-phone fa-flip-horizontal text-secondary"></i> <b class="text-600">{{ $pedido->cliente->dados->telefone ?? '' }}</b></div>
                             </div>
                     </div>
                     <!-- /.col -->

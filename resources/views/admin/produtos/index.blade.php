@@ -82,56 +82,11 @@ $("body").on('change', '.status-produto', function () {
             status: status,
         },
         success: function (response) {
-            $("#lista-Produtos").html(response);
+           console.log(response);
         }
     });
 });
 
-// CADASTRAR
-    $("body").on('submit','#cadastrar-produtos', function(e) {
-
-    e.preventDefault();
-    var formData = $(this).serialize();
-    console.log(formData);
-
-    $("#msg-error").addClass('d-none');
-
-    $.ajax({
-        url: '{{route("admin.produtos.store")}}',
-        type: "POST",
-        data: formData,
-        
-        success: function(response) {
-        console.log(response);
-
-            $('#descricao').val('');
-            $('#grupoSelect').val('');
-            $('#categoriaSelect').val('');
-            $('#valor').val('');
-
-            $('#lista-Produtos').html(response);
-
-            $('#produtos_table').DataTable({
-                "lengthMenu": [5, 10, 20],
-                "pageLength": 5,
-                "language": {
-                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json"}
-            });
-        },
-
-        error: function(response) {
-        
-        $("#msg-error ul").html('');
-        var errors = $.parseJSON(response.responseText);
-            $.each(errors.errors, function (k, v) {
-                
-                $("#msg-error ul").append('<li class="text-white">'+v+'</li>')
-            });
-            $("#msg-error").removeClass('d-none')     
-        },      
-    });
-
-    });
 
 // EDITAR
     $("body").on('click','.editar-produtos',function() {
@@ -223,14 +178,8 @@ $("body").on('click', '.deletar-produtos', function (event) {
                 type: "GET",
                 success: function (response) {
 
-                    $("#lista-Produtos").html(response);
+                    window.location.reload();
 
-                    $('#produtos_table').DataTable({
-                        "lengthMenu": [5, 10, 20],
-                        "pageLength": 5,
-                        "language": {
-                        "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Portuguese-Brasil.json"}
-                    });
                 },
             });
         }

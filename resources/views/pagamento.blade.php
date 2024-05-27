@@ -12,11 +12,9 @@
     <header class="header-pagamento">
         <div class="row justify-content-center">
             <div class="col-auto text-center"> 
-                @if($produto->empresa->media)
-                    <img src="{{$produto->empresa->media->fullpatch()}}" >
-               
- 
-                @endif
+           
+                <img src="{{asset($produto->media->file)}}" class="img-fluid" alt="">
+                        
         </div>
         </div>
        
@@ -28,6 +26,7 @@
         <div class="row p-sm-5 p-3 ">
             <div class="ownerInfo ">
             <h6 class="text-center">Preencha o formulário para prosseguir com o pagamento </h6>
+          
             <div class="row mt-4">
                 <div class="col-sm-12 col-12">
                     <label for="inputEmail4" class="form-label">Nome Completo*</label>
@@ -189,19 +188,82 @@
         </form>
     </div>
 
+<!-- Modal-->
+    <div class="modal fade" id="exampleModalPopup" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+           
+            <div class="modal-body">
+            
+                <div class="row">
+                        <div class="col-sm-12">
+                        @if($produto->popup->media && $produto->popup->media->file != "")
+                        <img src="{{asset($produto->popup->media->fullpatch())}}" class="img-fluid" alt="">
+                        @endif
+                        </div>
+                </div>
+                <div class="row mt-3">
+                        <div class="col-sm-12">
+                             {!! $produto->popup->informativo ?? ''!!}
+                        </div>
+                        </div>
+            </div>
+            
+            </div>
+        </div>
+   </div>
+
+<!-- Modal-->
+<div class="modal fade" id="" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ <!--   <div class="modal fade" tabindex="-1" aria-labelledby="exampleModalLabel" role="dialog" aria-hidden="true" id="popup-pedido"> -->
+
+    <div class="modal-dialog modal" >
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Popup</h5>
+                <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close"><i class="fa-regular fa-circle-xmark"></i></button>
+            </div>
+            
+            <div class="modal-body" id="conteudo-pedido">
+
+                            
+            </div>
+        
+        </div>
+    </div>
+</div>
    
 
 
 
    
 </body>
-
-
-
 @endsection
+
 
 @section('scripts')
 <script>
+
+// Mouse Leave
+/* function addEvent(obj, evt, fn) {
+          if (obj.addEventListener) {
+              obj.addEventListener(evt, fn, false);
+          }
+          else if (obj.attachEvent) {
+              obj.attachEvent("on" + evt, fn);
+          }
+      }
+      addEvent(window,"load",function(e) {
+          addEvent(document, "mouseout", function(e) {
+              e = e ? e : window.event;
+              var from = e.relatedTarget || e.toElement;
+              if (!from || from.nodeName == "HTML") {     
+                  
+        $('#exampleModalPopup').modal('show');
+              }
+          });
+      }); */
 
 function atualizarValorFinal() {
     const parcelas = $('select[name="numberTax"]').val();
@@ -209,10 +271,6 @@ function atualizarValorFinal() {
 
     const valorTotal = $('input[name="valor"]').val();
     
-
-
-
-   
 
     let valorPorParcela = (valorTotal / parcelas).toFixed(2);
 
@@ -266,6 +324,7 @@ $('body').on('click','#aplicarCupom',function (e){
                     response.msg,
                     'error'
                 )
+                $('#cupom').val('');
             }
         })
     
@@ -334,6 +393,7 @@ $("body").on('click','#btnPayment',function(e){
         const loadingElement = document.querySelector('#loading')
         const thankYou = document.querySelector('#thanksPage')
         const paymentElement = document.querySelector('#paymentBox')
+
     $(loadingElement).removeClass('d-none'); 
     btnPayment.setAttribute('disabled', 'disabled');
 
@@ -349,11 +409,7 @@ $("body").on('click','#btnPayment',function(e){
                 if(data.status == 'ok'){
                
                  window.location.href = data.url;
-                
-
-
-                
-               
+                              
              
             }else{
                 var html = ''

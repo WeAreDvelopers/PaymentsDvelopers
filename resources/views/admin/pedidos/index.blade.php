@@ -227,7 +227,7 @@ $("body").on('click', '.deletar-produtos', function (event) {
                 type: "GET",
                 success: function (response) {
 
-                    $("#lista-Produtos").html(response);
+                    $("#lista-Pedidos").html(response);
 
                     $('#produtos_table').DataTable({
                         "lengthMenu": [5, 10, 20],

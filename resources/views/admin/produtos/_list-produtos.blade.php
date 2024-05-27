@@ -26,19 +26,18 @@
                                 Link</a>
                         </td>
                         
-                        
 
                         <td>
-                        <div class="form-check form-switch">
-                                        <input class="form-check-input status-categoria"
+                                <div class="form-check form-switch">
+
+                                        <input class="form-check-input status-produto"
                                          type="checkbox" name="status" role="switch" 
                                           value="ativo"
                                           data-id="{{$prod->id}}"
                                           @if($prod->status == 'ativo')
                                             checked
                                             @endif
-                                            >
-                                        <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
+                                            ><label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
                                     </div>
                         </td>
              

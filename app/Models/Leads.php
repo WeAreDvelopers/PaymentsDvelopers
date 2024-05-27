@@ -11,7 +11,9 @@ class Leads extends Model
     use HasFactory,SoftDeletes;
 
     protected $table = 'leads';
+
     protected $fillable = [
+        
         'id_empresa',
         'nome',
         'email',

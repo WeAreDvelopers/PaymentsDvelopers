@@ -32,7 +32,7 @@
                 <td>{{$cupom->tipo}}</td>
                           <td>
                           <div class="form-check form-switch">
-                                        <input class="form-check-input status-categoria"
+                                        <input class="form-check-input status-cupom"
                                          type="checkbox" name="status" role="switch" 
                                           value="ativo"
                                           data-id="{{$cupom->id}}"

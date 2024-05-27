@@ -23,7 +23,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
 class PagamentoController extends Controller
@@ -40,14 +39,16 @@ class PagamentoController extends Controller
     
     public function __construct(){
         
+
+
             $this->urlBase = env('BASE_ASAAS'); 
            // $this->token = env('TOKEN_ASAAS'); 
     }
 
 
     public function index(Request $request,$token = null){
-
-       
+      
+        
        $produto = Produtos::where('token',$token)->first();
        $sessionID = session()->getId();
        $carrinho = Carrinho::updateOrCreate([
@@ -73,21 +74,18 @@ class PagamentoController extends Controller
     public function aplicarCupom(Request $request){
 
         $data = $request->except('_token');
-       
         $carrinho = Carrinho::where('session_id',session()->getId())->first();
         $cupom = Cupons::where(['codigo'=>$data['cupom'],'id_produto'=>$data['produto']])->first();
 
-        if(!$cupom || $cupom->status == 'inativo'){
+        if(!$cupom){
                 return response(['msg'=>'Cupom não encontrado'],422);
         }else{
-           if($cupom->qtd <= 0){
+           if($cupom->cuponsDisponiveis($data['produto']) < 0){
                 return response(['msg'=>'Cupom inválido ou esgotado'],422);
            }
-         
         }
         $valorFinal = $cupom->calculaDesconto();
         $this->atualizaCarrinho([
-
             'id_cupom'=>$cupom->id,
             'valor_final' => $valorFinal,
 
@@ -95,7 +93,6 @@ class PagamentoController extends Controller
 
     }
     public function carrinho(Request $request){
-
         $carrinho = Carrinho::where('session_id',session()->getId())->first();
         $produto = $carrinho->produto;
 
@@ -108,9 +105,7 @@ class PagamentoController extends Controller
 
         return view('include._item',compact('carrinho','produto','totalDisponivel'));
     }
-
     public function capturaLead(Request $request,$token = null){
-
         $data = $request->except('_token');
        
         $produto = Produtos::where('token',$token)->first();
@@ -121,29 +116,25 @@ class PagamentoController extends Controller
             ],[
             'nome'          => $data['nome'],
             'telefone'      => $data['celular'],
-            'cpf'      => $data['cpf']
         ]);
 
         $this->atualizaCarrinho([
             'id_lead'=>$lead->id
         ]);
     }
-
     public function atualizaCarrinho($array){
-
         $carrinho = Carrinho::updateOrCreate([
             'session_id'=>session()->getId(),
         ],$array);
     }
-
     public function createBaseAccount(Request $request,$token = null){
-
         $dados = $request->except('_token');
-  //   dd($dados); NULL
+       
+      
         $produto = Produtos::where('token',$token)->first();
        
         $empresa = $produto->empresa;
-       
+        // $companyInfo = $this->createBaseCompany($dados);
         $customerInfo = $this->createBaseCustomer($dados,$empresa);
 
         if($customerInfo['status'] == 'error'){
@@ -153,22 +144,11 @@ class PagamentoController extends Controller
             ]);
         }
         $customerInfo = $customerInfo['data'];
-      
+       
+        //$payment = $this->criarAssinatura($customerInfo, $dados);
         $carrinho = Carrinho::where('session_id',session()->getId())->first();
         $pedido = $this->criaPedido($customerInfo, $carrinho);
-//dd($pedido); 10 ex
-
-
-        $idCupom = $pedido['pedido']->id_cupom;
-        $cupom = Cupons::where('id', $idCupom)->first();
-
-        if (isset($cupom) && $cupom->qtd > 0) {
-            $cupom->qtd -= 1;
-            $cupom->save();
-        }
-    
-       $customerInfo['itens_pedidos'] =  $pedido['pedido']->itens;
-     
+        
         // if($payment['status'] == 'error'){
         //     return response()->json([
         //         'status' => 'error',
@@ -176,7 +156,6 @@ class PagamentoController extends Controller
         //     ]);
         // }
         $customerInfo['pedido'] = $pedido['pedido']->toArray();
-     
         //$customerInfo['payment'] = $payment;
         $customerInfo['total'] = $this->valor;
         $customerInfo['vencimento'] = $this->vencimento;
@@ -186,7 +165,7 @@ class PagamentoController extends Controller
         if($this->bonus){
             $this->sendMail($customerInfo,'compra');
         }
-
+dd('a');
         return response()->json([
             'status'    => 'ok',
             'message'   =>  'Payment created successfully!',
@@ -205,16 +184,13 @@ class PagamentoController extends Controller
     //  }
 
      public function createBaseCustomer($dados,$empresa){
-
         $now = Carbon::now();
         $costumer = User::where('email', $dados['email'])->first();
         $senha = Str::random(8);
         $tokenAsaas = null;
-
         if($costumer){
             $tokenAsaas = $costumer->tokenAssas($empresa->id)->first();
         }else{
-
             $costumer = User::create([
                 'name'  => $dados['nome'],
                 'email' =>  $dados['email'],
@@ -223,7 +199,7 @@ class PagamentoController extends Controller
             ]);
             DadosClientes::create([
                 'id_user'=>$costumer->id,
-                'cpf' => $dados['cpf'],
+                'cpf' => @$dados['cpf'],
                 'telefone'=>$dados['celular'],
                
             ]);
@@ -280,7 +256,7 @@ class PagamentoController extends Controller
      }
  
      public function sendMail($userInfo, $view){
-      
+       
        
         $logo = Media::find($userInfo['pedido']['empresa']['id_logo']);
         
@@ -462,10 +438,8 @@ class PagamentoController extends Controller
 
         $pedido = Pedidos::where('numero_pedido',$pedido)->first();
         
-        Session::forget('produto');
-        Session::forget('carrinho');
-        $request->session()->regenerate();
-
+        // $servico = new APIManager();
+        // $servico->start($pedido);
         return view('sucesso',compact('pedido'));
     }
 
