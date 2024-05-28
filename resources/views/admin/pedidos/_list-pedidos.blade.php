@@ -6,7 +6,7 @@
                         <th scope="col">Pedido</th>
                        
                         <th scope="col">Cliente</th>
-                       
+                        <th scope="col">Produto</th>
                         <th scope="col">Valor</th>
 
 
@@ -21,6 +21,7 @@
                        
                         <td>{{$ped->numero_pedido}}</td>
                         <td>{{$ped->cliente->name}}</td>
+                        <td>{{$ped->itens2->produto->nome ?? ''}}</td>
                         
                         <td>{{getMoney($ped->valor_final,'R$') ?? ''}}</td>
 

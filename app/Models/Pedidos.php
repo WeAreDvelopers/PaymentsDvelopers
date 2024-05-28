@@ -10,6 +10,7 @@ class Pedidos extends Model
     use HasFactory;
 
     protected $table = 'pedidos';
+    
     protected $fillable = [
         'numero_pedido',
         'id_user',
@@ -23,6 +24,10 @@ class Pedidos extends Model
 
     public function itens(){
         return  $this->hasMany(PedidosItens::class,'id_pedido','id');
+    }
+
+    public function itens2(){
+        return  $this->hasOne(PedidosItens::class,'id_pedido','id');
     }
 
     public function empresa(){
