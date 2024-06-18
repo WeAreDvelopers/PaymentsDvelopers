@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use URL;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable,HasFactory,SoftDeletes;
@@ -45,7 +47,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    public function scopeFilterEmpresa(Builder $query): void{
+        $query->where('id_empresa',Auth::user()->id_empresa);
+    }
     public function empresa(){
         return $this->hasOne(Empresas::class,'id','id_empresa');
     }

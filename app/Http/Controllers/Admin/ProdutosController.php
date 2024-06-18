@@ -18,8 +18,6 @@ class ProdutosController extends Controller
 public function index(Request $request){
                 
     $empresa_id = Auth::user()->id_empresa;
-
-
     $produtos = Produtos::where('id_empresa', $empresa_id)->get();
 
     return view('admin.produtos.index', compact('produtos'));

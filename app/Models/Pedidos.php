@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class Pedidos extends Model
 {
@@ -21,7 +23,9 @@ class Pedidos extends Model
         'valor_desconto',
         'valor_final',
     ];
-
+    public function scopeFilterEmpresa(Builder $query): void{
+        $query->where('id_empresa',Auth::user()->id_empresa);
+    }
     public function itens(){
         return  $this->hasMany(PedidosItens::class,'id_pedido','id');
     }

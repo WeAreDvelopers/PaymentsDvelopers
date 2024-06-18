@@ -39,6 +39,7 @@ class HomeController extends Controller
        
         $usersPorMes = User::query()
         ->where('role', 'cliente')
+        ->where('id_empresa',Auth::user()->id_empresa)
         ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as count')
         ->groupByRaw('YEAR(created_at), MONTH(created_at)')
         ->orderByRaw('YEAR(created_at), MONTH(created_at)')
@@ -61,11 +62,11 @@ class HomeController extends Controller
         $cliente_total = $totalClientes;
 
         $cupons_disponiveis = Cupons::sum('qtd');
-        $cupons_utilizados = Pedidos::whereNotNull('id_cupom')->count();
+        $cupons_utilizados = Pedidos::filterEmpresa()->whereNotNull('id_cupom')->count();
         $cupons_total =  $cupons_disponiveis + $cupons_utilizados;
 
-        $pedidos_total = Pedidos::count();
-        $faturamento = Pedidos::sum('valor_final');
+        $pedidos_total = Pedidos::filterEmpresa()->count();
+        $faturamento = Pedidos::filterEmpresa()->sum('valor_final');
 
         $Cupons = [       
             
@@ -81,6 +82,7 @@ class HomeController extends Controller
         ->join('produtos', 'pedidos_itens.id_produto', '=', 'produtos.id')
         ->select('produtos.nome', DB::raw('count(pedidos_itens.id_produto) as quantidade'))
         ->groupBy('produtos.nome')
+        ->where('pedidos.id_empresa',Auth::user()->id_empresa)
         ->get();
 
         // Formate os resultados para o gráfico

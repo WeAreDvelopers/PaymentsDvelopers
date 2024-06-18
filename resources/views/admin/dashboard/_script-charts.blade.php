@@ -62,6 +62,7 @@
           title: 'Venda por Produto',
           titleTextStyle: { fontSize: 18, color: 'black' },
           pieHole: 0.4,
+          legend: {position: 'bottom', textStyle: {color: 'blue', fontSize: 16}},
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));

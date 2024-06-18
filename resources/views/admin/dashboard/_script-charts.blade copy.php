@@ -113,6 +113,7 @@
         var options = {
           title: 'My Daily Activities',
           pieHole: 0.4,
+          legend: {position: 'bottom', textStyle: {color: 'blue', fontSize: 16}},
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('donutchart'));

@@ -14,10 +14,10 @@ class LeadsController extends Controller
     public function index(Request $request)
     {
 
-        $empresa_id = Auth::user()->id_empresa;
+      
  
 
-        $leads = Leads::where('id_empresa', $empresa_id)->get();
+        $leads = Leads::filterEmpresa()->get();
     
         return view('admin.leads.index', compact('leads'));
         
@@ -27,7 +27,7 @@ class LeadsController extends Controller
     public function delete(Request $request,$id)   {
 
         $lead = Leads::find($id);
-        $lead-> delete();
+        $lead->delete();
 
         return response()->json(['status'=>'ok'],200);
     }
