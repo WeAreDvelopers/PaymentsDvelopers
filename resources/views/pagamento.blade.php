@@ -13,7 +13,7 @@
         <div class="row justify-content-center">
             <div class="col-auto text-center"> 
            
-                <img src="{{asset($produto->media->file)}}" class="img-fluid" alt="">
+                <img src="{{asset($produto->media?->file)}}" class="img-fluid" alt="">
                         
         </div>
         </div>
@@ -197,7 +197,7 @@
             
                 <div class="row">
                         <div class="col-sm-12">
-                        @if($produto->popup->media && $produto->popup->media->file != "")
+                        @if(@$produto->popup?->media && $produto->popup->media?->file != "")
                         <img src="{{asset($produto->popup->media->fullpatch())}}" class="img-fluid" alt="">
                         @endif
                         </div>
