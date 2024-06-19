@@ -76,8 +76,8 @@
                     <select name="ead_simples_curso" id="" class="form-select">
                         <option value="">Selecione</option>
                         
-                        @foreach(eadSimples()->listaCutsos as $k => $curso)
-                        <option value="{{$curso->ID}}">{{$curso->name}}</option>
+                        @foreach(eadSimples()->listarCursos() as $k => $curso)
+                            <option value="{{ $curso['Id'] }}">{{ $curso['Nome'] }}</option>
                         @endforeach
                         <option value="PROD2">Produto 2</option>
                         <option value="PROD3">Produto 3</option>
