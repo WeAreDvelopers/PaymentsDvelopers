@@ -11,13 +11,13 @@ class Popup extends Model
     protected $fillable = [
 
         'id_produto',
-        'id_popup',
+        'id_media_popup',
         'informativo',
         'status'
     ];
 
  public function media(){
-        return $this->hasOne(Media::class,'id','id_popup');
+        return $this->hasOne(Media::class,'id','id_media_popup');
   }
 }
 

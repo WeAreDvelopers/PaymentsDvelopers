@@ -11,7 +11,7 @@
 
             @if(@$media->media)
              
-                    <input type="hidden" name="{{$collum}}" value="" />
+                    <input type="hidden" name="{{$collum}}" value="{{@$media->media->id}}" />
                     <a href="#" class="remove" data-file="{{ @$media->media->id }}">
                         <i class="fas fa-times"></i>
                     </a>

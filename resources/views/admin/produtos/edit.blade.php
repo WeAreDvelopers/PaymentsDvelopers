@@ -8,11 +8,11 @@
             <div class="card">
                 <div class="card-body">
 
-<div class="row">
-    <div class="col-2">Preview</div>
-    <div class="col"> <a href="{{route('site.pagamento',['token'=>$produto->token])}}" target="_blank" class="btn btn-sm btn-primary">
+                    <div class="row">
+                        <div class="col-2">Preview</div>
+                        <div class="col"> <a href="{{route('site.pagamento',['token'=>$produto->token])}}" target="_blank" class="btn btn-sm btn-primary">
                                 Link</a></div>
-</div>
+                    </div>
 
                     <div class="row">
                         <div class="col-auto">
@@ -26,11 +26,11 @@
                             <div class="row mt-2">
                                 <div class="form-group col-sm-5">
                                     <span class="titulo"> Nome: *</span>
-                                    <input type="text" name="nome"  value="{{$produto->nome}}" class="form-control" required>
+                                    <input type="text" name="nome" value="{{$produto->nome}}" class="form-control" required>
                                 </div>
                                 <div class="form-group col-sm-5">
                                     <span class="titulo"> Descrição: *</span>
-                                    <input type="text" name="descricao"  value="{{$produto->descricao}}" class="form-control" required>
+                                    <input type="text" name="descricao" value="{{$produto->descricao}}" class="form-control" required>
                                 </div>
                                 <div class="form-group col-sm-3 me-5">
                                     <span class="titulo"> Valor: *</span>
@@ -55,15 +55,12 @@
                                         <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
                                     </div>
                                 </div>
-                                <div class="form-group col-sm-3 me-5">
-                                    <input type="hidden" name="id" value="{{$produto->id}}">
-                                </div>
 
                             </div>
                         </div>
                     </div>
 
-    <div class="col-12"></div>
+                    <div class="col-12"></div>
 
 
 
@@ -72,132 +69,138 @@
             </div>
 
 
-    </div>
-    
-    @if(empresa()->checkIntegracao('eadsimples')->status == 'ativo')
-    <div class="card mt-3">
-       <div class="card-body">
-        <div class="row">
-            <div class="col-2">
-            <img src="{{asset('img/integracoes/eadsimples.png')}}" style="height: 50px; width: auto;" alt="">
-            </div>
-            <div class="col">
-                    <p>Selecione o produto relacionado em sua conta do EAD Simples</p>
-                   
-                    <select name="ead_simples_curso" id="" class="form-select">
-                        <option value="">Selecione</option>
-                        @foreach(eadSimples()->listarCursos() as $k => $v)
-                            <option value="{{$v['Id']}}" @if(optional($produto->produtosEadSimples)->id_produto_ead == $v['Id']) selected @endif>{{$v['Nome']}} ({{$v['Status']}})</option>
-                        @endforeach
-                    </select>
-            </div>
-            </div>     
-        </div>   
-    </div>
-    @endif
 
 
-    <div class="card mt-3">
-        <div class="card-body">
+            @if(empresa()->checkIntegracao('eadsimples')->status == 'ativo')
+            <div class="card mt-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-2">
+                            <img src="{{asset('img/integracoes/eadsimples.png')}}" style="height: 50px; width: auto;" alt="">
+                        </div>
+                        <div class="col">
+                            <p>Selecione o produto relacionado em sua conta do EAD Simples</p>
 
-        <div class="row">
-
-            <div class="col-sm-5">
-                <h4>Popup</h4>
-            </div>
-            <div class="form-group col-sm-3 me-5">
-                                    
-                    <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" name="status_popup" role="switch" value="ativo" id="flexSwitchCheckChecked_popup" checked>
-                            <label class="form-check-label" for="flexSwitchCheckChecked">Ativo</label>
+                            <select name="ead_simples_curso" id="" class="form-select">
+                                <option value="">Selecione</option>
+                                @foreach(eadSimples()->listarCursos() as $k => $v)
+                                <option value="{{$v['Id']}}" @if(optional($produto->produtosEadSimples)->id_produto_ead == $v['Id']) selected @endif>{{$v['Nome']}} ({{$v['Status']}})</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-             </div>
+                </div>
+            </div>
+            @endif
 
-        </div>
-          
-            <div class="row">
 
-                <div class="col-5 text-center">
-                        <label for="exampleInputFile" class="control-label">
+            <div class="card mt-3">
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <div class="col-sm-5">
+                            <h4>Popup</h4>
+                        </div>
+                        <div class="form-group col-sm-3 me-5">
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="status_popup" role="switch" value="ativo" id="flexSwitchCheckChecked_popup" @if($produto->popup !== null && $produto->popup->status == 'ativo')
+                                checked
+                                @endif>
+                                <label class="form-check-label" for="flexSwitchCheckChecked">
+                                    @if($produto->popup !== null && $produto->popup->status == 'ativo')
+                                    Ativo
+                                    @else
+                                    Inativo
+                                    @endif
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-5 text-center">
+                            <label for="exampleInputFile" class="control-label">
                                 Imagem Produto <small>(500 x 500px)</small>
-                        </label>
-                        <x-upload-file target="logo" collum="id_popup" :media="$produto->popup" />
+                            </label>
+                            <x-upload-file target="logo" collum="id_media_popup" :media="$produto->popup" />
+
+                        </div>
+
+                        <div class="col-7">
+                            <!-- CONTEUDO SUMMER NOTE -->
+                            <textarea id="summernote" name="informativo" class="form-control" placeholder="Digite o conteudo do assunto" required>{{$produto->popup->informativo ?? ''}}</textarea>
+                        </div>
+                    </div>
 
                 </div>
-
-                <div class="col-7">
-    <!-- CONTEUDO SUMMER NOTE -->
-                        <textarea id="summernote" name="informativo" class="form-control"  placeholder="Digite o conteudo do assunto" required >{{$produto->popup->informativo ?? ''}}</textarea>
-                 </div>
             </div>
 
-        </div>
+            <div class="card mt-3">
+                <div class="card-body text-end">
+
+                    <button class="btn btn-success m-0" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i> Salvar</button>
+
+                </div>
+            </div>
+        </form>
     </div>
-
-    <div class="card mt-3">
-        <div class="card-body text-end">
-
-            <button class="btn btn-success m-0" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i> Salvar</button>
-
-        </div>
-    </div>
-    </form>
 </div>
 @endsection
 
 @section('scripts')
 <script>
+    $('#summernote').summernote({
 
-$('#summernote').summernote({
-       
-       tabsize: 1,
-       height: 120,
-       
-     });
+        tabsize: 1,
+        height: 120,
 
-// ATUALIZAR
-    $("body").on('submit','#atualizar-produtos', function(e) {
+    });
 
-    e.preventDefault();
-    var formData = $(this).serialize();
-    console.log(formData);
+    // ATUALIZAR
+    $("body").on('submit', '#atualizar-produtos', function(e) {
 
-    $("#msg-error").addClass('d-none');
+        e.preventDefault();
+        var formData = $(this).serialize();
+        console.log(formData);
 
-    $.ajax({
+        $("#msg-error").addClass('d-none');
 
-        url: $(this).attr('action'),  
-        type: "POST",                
-        data: formData,
-        
-        success: function(response) {
-            
-            console.log(response);
-            swal({
+        $.ajax({
+
+            url: $(this).attr('action'),
+            type: "POST",
+            data: formData,
+
+            success: function(response) {
+
+                console.log(response);
+                swal({
                     title: "Parábens",
                     text: "Atualizado com sucesso!.",
                     icon: "success",
                 }).then(function() {
 
-                   // location.reload();
+                    // location.reload();
                     window.location.href = '{{route("admin.produtos.index")}}';
                 });
-          
-        }, 
 
-        error: function(response) {
-            
-            $("#msg-error ul").html('');
-            var errors = $.parseJSON(response.responseText);
-                $.each(errors.errors, function (k, v) {
-                    
-                    $("#msg-error ul").append('<li class="text-white">'+v+'</li>')
+            },
+
+            error: function(response) {
+
+                $("#msg-error ul").html('');
+                var errors = $.parseJSON(response.responseText);
+                $.each(errors.errors, function(k, v) {
+
+                    $("#msg-error ul").append('<li class="text-white">' + v + '</li>')
                 });
-                $("#msg-error").removeClass('d-none')     
-        },      
+                $("#msg-error").removeClass('d-none')
+            },
+        });
     });
-    });
-
-   
 </script>
 @endsection

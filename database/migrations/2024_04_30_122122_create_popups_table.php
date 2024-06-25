@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
 
             $table->integer('id_produto');
-            $table->integer('id_media')->nullable();
-            $table->longText('informativo');
+            $table->integer('id_media_popup')->nullable();
+            $table->longText('informativo')->nullable();
 
             $table->enum('status',['ativo','inativo'])->default('inativo');
 
