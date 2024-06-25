@@ -402,6 +402,7 @@ class PagamentoController extends Controller
             'valor'             => $carrinho->valor,
             'valor_desconto'    => $carrinho->valor - $carrinho->valor_final,
             'valor_final'       =>  $carrinho->valor_final,
+            'qtd'               =>  '1',
         ]);
         PedidosItens::create([
             'id_pedido'         => $pedido->id,

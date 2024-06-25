@@ -87,7 +87,7 @@
                     <select name="ead_simples_curso" id="" class="form-select">
                         <option value="">Selecione</option>
                         @foreach(eadSimples()->listarCursos() as $k => $v)
-                        <option value="{{$v['Id']}}" @if($produto->produtosEadSimples->id_produto_ead == $v['Id']) selected @endif >{{$v['Nome']}} ({{$v['Status']}}) </option>
+                            <option value="{{$v['Id']}}" @if(optional($produto->produtosEadSimples)->id_produto_ead == $v['Id']) selected @endif>{{$v['Nome']}} ({{$v['Status']}})</option>
                         @endforeach
                     </select>
             </div>

@@ -22,6 +22,7 @@ class Pedidos extends Model
         'valor',
         'valor_desconto',
         'valor_final',
+        'qtd',
     ];
     public function scopeFilterEmpresa(Builder $query): void{
         $query->where('id_empresa',Auth::user()->id_empresa);

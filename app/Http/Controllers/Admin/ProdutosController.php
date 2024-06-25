@@ -72,6 +72,7 @@ public function new(Request $request){
         }
 
       return response()->json(['status'=>'ok'],200);
+    // return redirect()->route('admin.produtos.index')->with('success', 'Produto salvo com sucesso!');
     }
 
 // EDIT
